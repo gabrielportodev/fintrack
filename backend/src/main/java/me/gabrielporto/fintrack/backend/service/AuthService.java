@@ -6,9 +6,10 @@ import me.gabrielporto.fintrack.backend.dto.request.LoginRequest;
 import me.gabrielporto.fintrack.backend.dto.request.RegisterRequest;
 import me.gabrielporto.fintrack.backend.dto.response.RegisterResponse;
 import me.gabrielporto.fintrack.backend.dto.response.TokenResponse;
+import me.gabrielporto.fintrack.backend.exception.EmailAlreadyExistsException;
+import me.gabrielporto.fintrack.backend.exception.InvalidCredentialsException;
 import me.gabrielporto.fintrack.backend.repository.UserRepository;
 import me.gabrielporto.fintrack.backend.security.JwtService;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
@@ -16,7 +17,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +30,7 @@ public class AuthService {
 
     public RegisterResponse register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException("Email já cadastrado");
+            throw new EmailAlreadyExistsException(request.getEmail());
         }
 
         User user = User.builder()
@@ -50,7 +50,7 @@ public class AuthService {
                     new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
             );
         } catch (AuthenticationException e) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciais inválidas");
+            throw new InvalidCredentialsException();
         }
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
