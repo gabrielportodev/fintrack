@@ -30,7 +30,7 @@ public class AuthService {
 
     public RegisterResponse register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new EmailAlreadyExistsException(request.getEmail());
+            throw new EmailAlreadyExistsException();
         }
 
         User user = User.builder()
