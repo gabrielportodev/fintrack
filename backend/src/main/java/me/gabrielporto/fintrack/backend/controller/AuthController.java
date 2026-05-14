@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import me.gabrielporto.fintrack.backend.dto.request.LoginRequest;
 import me.gabrielporto.fintrack.backend.dto.request.RegisterRequest;
+import me.gabrielporto.fintrack.backend.dto.response.ApiResponse;
 import me.gabrielporto.fintrack.backend.dto.response.RegisterResponse;
 import me.gabrielporto.fintrack.backend.dto.response.TokenResponse;
 import me.gabrielporto.fintrack.backend.service.AuthService;
@@ -19,12 +20,13 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<RegisterResponse> register(@Valid @RequestBody RegisterRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(authService.register(request));
+    public ResponseEntity<ApiResponse<RegisterResponse>> register(@Valid @RequestBody RegisterRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.success(authService.register(request), "Usuário registrado com sucesso"));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<TokenResponse> login(@Valid @RequestBody LoginRequest request) {
-        return ResponseEntity.ok(authService.login(request));
+    public ResponseEntity<ApiResponse<TokenResponse>> login(@Valid @RequestBody LoginRequest request) {
+        return ResponseEntity.ok(ApiResponse.success(authService.login(request), "Login realizado com sucesso"));
     }
 }
