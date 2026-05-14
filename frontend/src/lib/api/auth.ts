@@ -15,6 +15,6 @@ export const authService = {
 
   logout: () => {
     clearToken()
-    window.location.href = '/login'
+    window.location.href = '/auth/sign-in'
   }
 }
