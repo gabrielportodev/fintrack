@@ -14,8 +14,9 @@ import {
 } from 'lucide-react'
 import { LogoIcon } from '@/components/shared/logo-icon'
 import { useAuth } from '@/contexts/auth-context'
+import { Button } from '@/components/ui/button'
 import { usePathname } from 'next/navigation'
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
 
@@ -119,35 +120,37 @@ function SidebarContent({ collapsed, isMobile, onNavigate, onToggleCollapse }: S
 
       <div className={cn('pb-5 pt-3 border-t border-border flex flex-col gap-0.5', expanded ? 'px-4' : 'px-2')}>
         {!isMobile && (
-          <button
+          <Button
+            variant='ghost'
             onClick={onToggleCollapse}
             title={collapsed ? 'Expandir' : undefined}
             className={cn(
-              'cursor-pointer flex items-center w-full rounded-lg text-sm font-medium text-muted-foreground hover:bg-background hover:text-foreground transition-colors',
-              expanded ? 'gap-3 px-3 py-2.5' : 'justify-center py-2.5'
+              'w-full rounded-lg text-sm font-medium text-muted-foreground hover:bg-background hover:text-foreground',
+              expanded ? 'justify-start gap-3 px-3 py-2.5 h-auto' : 'justify-center py-2.5 h-auto'
             )}
           >
             {collapsed ? (
               <ChevronRight size={16} />
             ) : (
-              <>
+              <Fragment>
                 <ChevronLeft size={16} />
                 Recolher
-              </>
+              </Fragment>
             )}
-          </button>
+          </Button>
         )}
-        <button
+        <Button
+          variant='ghost'
           onClick={logout}
           title={!expanded ? 'Sair' : undefined}
           className={cn(
-            'cursor-pointer flex items-center w-full rounded-lg text-sm font-medium text-muted-foreground hover:bg-background hover:text-foreground transition-colors',
-            expanded ? 'gap-3 px-3 py-2.5' : 'justify-center py-2.5'
+            'w-full rounded-lg text-sm font-medium text-muted-foreground hover:bg-background hover:text-foreground',
+            expanded ? 'justify-start gap-3 px-3 py-2.5 h-auto' : 'justify-center py-2.5 h-auto'
           )}
         >
           <LogOut size={16} />
           {expanded && 'Sair'}
-        </button>
+        </Button>
       </div>
     </aside>
   )
@@ -158,26 +161,28 @@ export function Sidebar() {
   const [mobileOpen, setMobileOpen] = useState(false)
 
   return (
-    <>
+    <Fragment>
       <div className='hidden md:flex h-full'>
         <SidebarContent collapsed={collapsed} isMobile={false} onToggleCollapse={() => setCollapsed(c => !c)} />
       </div>
 
-      <button
+      <Button
+        variant='outline'
+        size='icon'
         onClick={() => setMobileOpen(true)}
-        className='cursor-pointer fixed top-4 left-4 z-40 md:hidden flex items-center justify-center w-9 h-9 rounded-lg bg-background border border-border'
+        className='fixed top-4 left-4 z-40 md:hidden rounded-lg'
       >
         <Menu size={18} />
-      </button>
+      </Button>
 
       {mobileOpen && (
-        <>
+        <Fragment>
           <div className='fixed inset-0 z-40 bg-black/50 md:hidden' onClick={() => setMobileOpen(false)} />
           <div className='fixed inset-y-0 left-0 z-50 md:hidden flex'>
             <SidebarContent collapsed={false} isMobile={true} onNavigate={() => setMobileOpen(false)} />
           </div>
-        </>
+        </Fragment>
       )}
-    </>
+    </Fragment>
   )
 }

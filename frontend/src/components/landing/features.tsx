@@ -4,23 +4,23 @@ const features = [
   {
     icon: TrendingUp,
     title: 'Controle de gastos',
-    description: 'Cada centavo categorizado. Saiba para onde o dinheiro vai antes do fim do mês.',
+    description: 'Cada centavo categorizado. Saiba para onde o dinheiro vai antes do fim do mês.'
   },
   {
     icon: Target,
     title: 'Metas mensais',
-    description: 'Defina um teto por categoria e receba alertas antes de estourar.',
+    description: 'Defina um teto por categoria e receba alertas antes de estourar.'
   },
   {
     icon: BarChart2,
     title: 'Relatórios visuais',
-    description: 'Gráficos limpos e exportáveis em PDF para entender padrões em segundos.',
+    description: 'Gráficos limpos e exportáveis em PDF para entender padrões em segundos.'
   },
   {
     icon: Tag,
     title: 'Categorias flexíveis',
-    description: 'Crie, edite e personalize categorias com cor e ícone próprios.',
-  },
+    description: 'Crie, edite e personalize categorias com cor e ícone próprios.'
+  }
 ]
 
 export const Features = () => {
@@ -29,9 +29,7 @@ export const Features = () => {
       <div className='max-w-5xl mx-auto px-6'>
         <div className='text-center mb-14'>
           <div className='text-xs font-semibold text-primary tracking-widest uppercase mb-3'>Recursos</div>
-          <h2 className='text-[2rem] font-semibold tracking-tight'>
-            Tudo que você precisa, nada que não precisa.
-          </h2>
+          <h2 className='text-[2rem] font-semibold tracking-tight'>Tudo que você precisa, nada que não precisa.</h2>
         </div>
         <div className='grid md:grid-cols-4 gap-4'>
           {features.map(({ icon: Icon, title, description }) => (

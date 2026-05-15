@@ -1,13 +1,12 @@
 'use client'
 
 import { loginSchema, type LoginSchemaType } from '@/schemas/auth.schema'
-import { GoogleIcon } from '@/components/shared/google-icon'
 import { LogoIcon } from '@/components/shared/logo-icon'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useAuth } from '@/contexts/auth-context'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { useAuth } from '@/contexts/auth-context'
 import { getErrorMessage } from '@/lib/utils'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
@@ -97,24 +96,6 @@ const SignInPage = () => {
             {isSubmitting ? 'Entrando...' : 'Entrar na conta'}
           </Button>
         </form>
-
-        <div className='relative my-5'>
-          <div className='absolute inset-0 flex items-center'>
-            <div className='w-full border-t border-white/8' />
-          </div>
-          <div className='relative flex justify-center text-[11px] uppercase tracking-widest'>
-            <span className='bg-background px-3 text-muted-foreground/50'>ou</span>
-          </div>
-        </div>
-
-        <Button
-          variant='outline'
-          className='w-full h-10 gap-2.5 border-white/15 hover:border-white/25 bg-transparent hover:bg-white/4'
-          type='button'
-        >
-          <GoogleIcon />
-          <span className='text-[13.5px]'>Continuar com Google</span>
-        </Button>
 
         <p className='text-center text-[13px] text-muted-foreground mt-6'>
           Não tem uma conta?{' '}

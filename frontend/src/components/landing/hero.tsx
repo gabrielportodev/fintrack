@@ -47,7 +47,7 @@ const BgDashboard = () => (
     </aside>
 
     <div className='flex-1 bg-[#0F1117] p-7'>
-      <div className='text-lg font-semibold text-white mb-1'>Olá, Gabriel 👋</div>
+      <div className='text-lg font-semibold text-white mb-1'>Olá, Gabriel</div>
       <div className='text-xs text-[#94A3B8] mb-5'>Maio de 2026</div>
       <div className='grid grid-cols-4 gap-3 mb-5'>
         {mockCards.map(card => (
@@ -177,7 +177,7 @@ export const Hero = () => {
             <div className='flex-1 bg-[#0F1117] p-6 overflow-hidden'>
               <div className='flex justify-between items-end mb-5'>
                 <div>
-                  <div className='text-lg font-semibold'>Olá, Gabriel 👋</div>
+                  <div className='text-lg font-semibold'>Olá, Gabriel</div>
                   <div className='text-xs text-muted-foreground mt-0.5'>Maio de 2026</div>
                 </div>
               </div>

@@ -6,28 +6,28 @@ import { Plus, Minus } from 'lucide-react'
 const items = [
   {
     q: 'O Fintrack é realmente gratuito?',
-    a: 'Sim. O plano gratuito cobre todas as funcionalidades essenciais: transações ilimitadas, categorias personalizadas, metas mensais e relatórios básicos. Sem cartão, sem cobranças surpresa.',
+    a: 'Sim. O plano gratuito cobre todas as funcionalidades essenciais: transações ilimitadas, categorias personalizadas, metas mensais e relatórios básicos. Sem cartão, sem cobranças surpresa.'
   },
   {
     q: 'Meus dados financeiros estão seguros?',
-    a: 'Todos os dados são armazenados com criptografia em repouso e em trânsito. Nunca compartilhamos suas informações com terceiros e você pode exportar ou deletar tudo a qualquer momento.',
+    a: 'Todos os dados são armazenados com criptografia em repouso e em trânsito. Nunca compartilhamos suas informações com terceiros e você pode exportar ou deletar tudo a qualquer momento.'
   },
   {
     q: 'Preciso conectar minha conta bancária?',
-    a: 'Não. O Fintrack é um sistema de registro manual — você tem controle total sobre o que entra e o que não entra. Sem integração com bancos, sem tokens de acesso à sua conta.',
+    a: 'Não. O Fintrack é um sistema de registro manual — você tem controle total sobre o que entra e o que não entra. Sem integração com bancos, sem tokens de acesso à sua conta.'
   },
   {
     q: 'Posso usar em mais de um dispositivo?',
-    a: 'Sim. A conta é sincronizada e funciona em qualquer navegador. Basta entrar com seu e-mail e senha.',
+    a: 'Sim. A conta é sincronizada e funciona em qualquer navegador. Basta entrar com seu e-mail e senha.'
   },
   {
     q: 'Como funcionam as metas mensais?',
-    a: 'Você define um valor limite por categoria e por mês. O Fintrack calcula automaticamente quanto você já gastou naquela categoria e exibe o progresso com alertas visuais quando estiver se aproximando do limite.',
+    a: 'Você define um valor limite por categoria e por mês. O Fintrack calcula automaticamente quanto você já gastou naquela categoria e exibe o progresso com alertas visuais quando estiver se aproximando do limite.'
   },
   {
     q: 'Posso exportar os relatórios?',
-    a: 'Sim. Na tela de Relatórios, você pode exportar um PDF com o resumo do período selecionado, incluindo gráficos e tabelas por categoria.',
-  },
+    a: 'Sim. Na tela de Relatórios, você pode exportar um PDF com o resumo do período selecionado, incluindo gráficos e tabelas por categoria.'
+  }
 ]
 
 export const Faq = () => {
@@ -53,9 +53,7 @@ export const Faq = () => {
                   {open === i ? <Minus size={13} /> : <Plus size={13} />}
                 </span>
               </button>
-              {open === i && (
-                <p className='mt-3 text-[14px] text-muted-foreground leading-relaxed pr-11'>{a}</p>
-              )}
+              {open === i && <p className='mt-3 text-[14px] text-muted-foreground leading-relaxed pr-11'>{a}</p>}
             </div>
           ))}
         </div>

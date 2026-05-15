@@ -1,6 +1,6 @@
 'use client'
 
-import { LoadingSpinner } from '@/components/shared/loading-spinner'
+import { Loading } from '@/components/shared/loading'
 import { useAuth } from '@/contexts/auth-context'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
@@ -18,7 +18,7 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
   if (isLoading || !user) {
     return (
       <div className='min-h-screen bg-background flex items-center justify-center'>
-        <LoadingSpinner />
+        <Loading />
       </div>
     )
   }
