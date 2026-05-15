@@ -26,7 +26,7 @@ export function useAuth() {
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserType | null>(null)
-  const { loading, startLoading, stopLoading } = useLoading()
+  const { loading, startLoading, stopLoading } = useLoading(true)
 
   useEffect(() => {
     const token = getToken()
