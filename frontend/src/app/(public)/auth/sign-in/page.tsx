@@ -1,12 +1,42 @@
+'use client'
+
+import { loginSchema, type LoginSchemaType } from '@/schemas/auth.schema'
 import { GoogleIcon } from '@/components/shared/google-icon'
 import { LogoIcon } from '@/components/shared/logo-icon'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { getErrorMessage } from '@/lib/utils'
+import { authService } from '@/lib/api/auth'
+import { useRouter } from 'next/navigation'
+import { useForm } from 'react-hook-form'
 import { ArrowLeft } from 'lucide-react'
+import { toast } from 'sonner'
 import Link from 'next/link'
 
 const SignInPage = () => {
+  const router = useRouter()
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting }
+  } = useForm<LoginSchemaType>({
+    resolver: zodResolver(loginSchema)
+  })
+
+  const onSubmit = async (data: LoginSchemaType) => {
+    try {
+      const response = await authService.login(data)
+
+      toast.success(response.message)
+      router.push('/dashboard')
+    } catch (err) {
+      toast.error(getErrorMessage(err, 'Não foi possível fazer login. Tente novamente.'))
+    }
+  }
+
   return (
     <div className='min-h-screen bg-background flex flex-col items-center justify-center px-4 relative'>
       <Link
@@ -28,7 +58,7 @@ const SignInPage = () => {
           <p className='text-[13.5px] text-muted-foreground'>Insira suas credenciais para continuar.</p>
         </div>
 
-        <div className='flex flex-col gap-4'>
+        <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-4'>
           <div className='flex flex-col gap-1.5'>
             <Label htmlFor='email' className='text-[13px]'>
               E-mail
@@ -38,7 +68,9 @@ const SignInPage = () => {
               type='email'
               placeholder='seu@email.com'
               className='h-10 border-white/15 focus-visible:border-primary'
+              {...register('email')}
             />
+            {errors.email && <p className='text-[12px] text-destructive'>{errors.email.message}</p>}
           </div>
 
           <div className='flex flex-col gap-1.5'>
@@ -55,11 +87,15 @@ const SignInPage = () => {
               type='password'
               placeholder='••••••••'
               className='h-10 border-white/15 focus-visible:border-primary'
+              {...register('password')}
             />
+            {errors.password && <p className='text-[12px] text-destructive'>{errors.password.message}</p>}
           </div>
 
-          <Button className='w-full h-10 mt-1'>Entrar na conta</Button>
-        </div>
+          <Button className='w-full h-10 mt-1' type='submit' disabled={isSubmitting}>
+            {isSubmitting ? 'Entrando...' : 'Entrar na conta'}
+          </Button>
+        </form>
 
         <div className='relative my-5'>
           <div className='absolute inset-0 flex items-center'>
@@ -73,6 +109,7 @@ const SignInPage = () => {
         <Button
           variant='outline'
           className='w-full h-10 gap-2.5 border-white/15 hover:border-white/25 bg-transparent hover:bg-white/4'
+          type='button'
         >
           <GoogleIcon />
           <span className='text-[13.5px]'>Continuar com Google</span>
