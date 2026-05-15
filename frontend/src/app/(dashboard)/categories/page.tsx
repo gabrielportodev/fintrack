@@ -3,9 +3,10 @@
 import { CategoryDialog } from '@/components/categories/category-dialog'
 import { CategoryGrid } from '@/components/categories/category-grid'
 import { PageHeader } from '@/components/shared/page-header'
-import { Button } from '@/components/ui/button'
 import { categoryService } from '@/lib/api/categories'
 import type { CategoryType } from '@/types/category'
+import { Button } from '@/components/ui/button'
+import { getErrorMessage } from '@/lib/utils'
 import { useState, useEffect } from 'react'
 import { Plus } from 'lucide-react'
 import { toast } from 'sonner'
@@ -40,11 +41,11 @@ const CategoriesPage = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      await categoryService.delete(id)
+      const { message } = await categoryService.delete(id)
       setCategories(prev => prev.filter(c => c.id !== id))
-      toast.success('Categoria removida')
-    } catch {
-      toast.error('Erro ao remover categoria')
+      toast.success(message)
+    } catch (error) {
+      toast.error(getErrorMessage(error, 'Erro ao remover categoria'))
     }
   }
 

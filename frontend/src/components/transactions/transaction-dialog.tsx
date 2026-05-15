@@ -68,11 +68,11 @@ export const TransactionDialog = ({ open, onOpenChange, transaction, onSaved }: 
 
     try {
       if (transaction) {
-        await transactionService.update(transaction.id, payload)
-        toast.success('Transação atualizada')
+        const { message } = await transactionService.update(transaction.id, payload)
+        toast.success(message)
       } else {
-        await transactionService.create(payload)
-        toast.success('Transação criada')
+        const { message } = await transactionService.create(payload)
+        toast.success(message)
       }
       onSaved()
       onOpenChange(false)

@@ -93,11 +93,11 @@ export const GoalDialog = ({ open, onOpenChange, goal, defaultMonth, defaultYear
     try {
       const payload = { name: name.trim(), limitAmount: amount, month: Number(month), year: Number(year), categoryId }
       if (goal) {
-        await goalService.update(goal.id, payload)
-        toast.success('Meta atualizada')
+        const { message } = await goalService.update(goal.id, payload)
+        toast.success(message)
       } else {
-        await goalService.create(payload)
-        toast.success('Meta criada')
+        const { message } = await goalService.create(payload)
+        toast.success(message)
       }
       onSaved()
       onOpenChange(false)

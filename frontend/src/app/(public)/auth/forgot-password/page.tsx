@@ -28,9 +28,9 @@ const ForgotPasswordPage = () => {
 
   const onSubmit = async (data: ForgotPasswordSchemaType) => {
     try {
-      await authService.forgotPassword(data.email)
+      const { message } = await authService.forgotPassword(data.email)
       sessionStorage.setItem('reset_email', data.email)
-      toast.success('Código enviado para seu email')
+      toast.success(message)
       router.push('/auth/verify-code')
     } catch (err) {
       toast.error(getErrorMessage(err, 'Não foi possível enviar o código. Tente novamente.'))

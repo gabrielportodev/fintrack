@@ -28,8 +28,8 @@ const SignUpPage = () => {
 
   const onSubmit = async (data: RegisterSchemaType) => {
     try {
-      await signUp(data)
-      toast.success('Conta criada com sucesso!', { description: 'Faça login para continuar.' })
+      const { message } = await signUp(data)
+      toast.success(message)
       router.push('/auth/sign-in')
     } catch (err) {
       toast.error(getErrorMessage(err, 'Não foi possível criar a conta. Tente novamente.'))

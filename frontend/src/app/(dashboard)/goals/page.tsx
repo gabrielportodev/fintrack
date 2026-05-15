@@ -5,6 +5,7 @@ import { PageHeader } from '@/components/shared/page-header'
 import { GoalDialog } from '@/components/goals/goal-dialog'
 import { GoalList } from '@/components/goals/goal-list'
 import { Button } from '@/components/ui/button'
+import { getErrorMessage } from '@/lib/utils'
 import { goalService } from '@/lib/api/goals'
 import type { GoalType } from '@/types/goal'
 import { useState, useEffect } from 'react'
@@ -68,11 +69,11 @@ const GoalsPage = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      await goalService.delete(id)
+      const { message } = await goalService.delete(id)
       setGoals(prev => prev.filter(g => g.id !== id))
-      toast.success('Meta removida')
-    } catch {
-      toast.error('Erro ao remover meta')
+      toast.success(message)
+    } catch (error) {
+      toast.error(getErrorMessage(error, 'Erro ao remover meta'))
     }
   }
 

@@ -34,10 +34,10 @@ const ResetPasswordPage = () => {
 
   const onSubmit = async (data: ResetPasswordSchemaType) => {
     try {
-      await authService.resetPassword(resetToken, data.newPassword, data.confirmPassword)
+      const { message } = await authService.resetPassword(resetToken, data.newPassword, data.confirmPassword)
       sessionStorage.removeItem('reset_email')
       sessionStorage.removeItem('reset_token')
-      toast.success('Senha redefinida com sucesso')
+      toast.success(message)
       router.push('/auth/sign-in')
     } catch (err) {
       toast.error(getErrorMessage(err, 'Não foi possível redefinir a senha. Tente novamente.'))

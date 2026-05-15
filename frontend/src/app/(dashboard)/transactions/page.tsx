@@ -8,6 +8,7 @@ import { transactionService } from '@/lib/api/transactions'
 import type { TransactionType } from '@/types/transaction'
 import { TransactionTypeEnum } from '@/types/transaction'
 import { Button } from '@/components/ui/button'
+import { getErrorMessage } from '@/lib/utils'
 import { useState, useEffect } from 'react'
 import { Plus } from 'lucide-react'
 import { toast } from 'sonner'
@@ -49,11 +50,11 @@ const TransactionsPage = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      await transactionService.delete(id)
+      const { message } = await transactionService.delete(id)
       setTransactions(prev => prev.filter(t => t.id !== id))
-      toast.success('Transação removida')
-    } catch {
-      toast.error('Erro ao remover transação')
+      toast.success(message)
+    } catch (error) {
+      toast.error(getErrorMessage(error, 'Erro ao remover transação'))
     }
   }
 

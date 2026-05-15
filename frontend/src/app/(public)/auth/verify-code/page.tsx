@@ -96,8 +96,8 @@ const VerifyCodePage = () => {
   const handleResend = async () => {
     if (cooldown > 0) return
     try {
-      await authService.forgotPassword(email)
-      toast.success('Código reenviado para seu email')
+      const { message } = await authService.forgotPassword(email)
+      toast.success(message)
       setCooldown(COOLDOWN_SECONDS)
       setDigits(Array(CODE_LENGTH).fill(''))
       setError('')

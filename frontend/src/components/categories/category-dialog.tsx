@@ -61,11 +61,15 @@ export const CategoryDialog = ({ open, onOpenChange, category, onSaved }: Catego
     setSaving(true)
     try {
       if (category) {
-        await categoryService.update(category.id, { name, color: selectedColor, icon: selectedIcon })
-        toast.success('Categoria atualizada')
+        const { message } = await categoryService.update(category.id, {
+          name,
+          color: selectedColor,
+          icon: selectedIcon
+        })
+        toast.success(message)
       } else {
-        await categoryService.create({ name, color: selectedColor, icon: selectedIcon })
-        toast.success('Categoria criada')
+        const { message } = await categoryService.create({ name, color: selectedColor, icon: selectedIcon })
+        toast.success(message)
       }
       onSaved()
       onOpenChange(false)
