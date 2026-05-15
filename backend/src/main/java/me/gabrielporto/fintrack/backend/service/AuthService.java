@@ -4,15 +4,18 @@ import lombok.RequiredArgsConstructor;
 import me.gabrielporto.fintrack.backend.domain.entity.User;
 import me.gabrielporto.fintrack.backend.dto.request.LoginRequest;
 import me.gabrielporto.fintrack.backend.dto.request.RegisterRequest;
+import me.gabrielporto.fintrack.backend.dto.response.MeResponse;
 import me.gabrielporto.fintrack.backend.dto.response.RegisterResponse;
 import me.gabrielporto.fintrack.backend.dto.response.TokenResponse;
 import me.gabrielporto.fintrack.backend.exception.EmailAlreadyExistsException;
 import me.gabrielporto.fintrack.backend.exception.InvalidCredentialsException;
+import me.gabrielporto.fintrack.backend.exception.ResourceNotFoundException;
 import me.gabrielporto.fintrack.backend.repository.UserRepository;
 import me.gabrielporto.fintrack.backend.security.JwtService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -58,4 +61,12 @@ public class AuthService {
 
         return new TokenResponse(token);
     }
+
+    public MeResponse me() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
+        return new MeResponse(user.getId(), user.getName(), user.getEmail(), user.getCreatedAt());
+    }
+    
 }

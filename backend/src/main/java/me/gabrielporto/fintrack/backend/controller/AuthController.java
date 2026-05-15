@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import me.gabrielporto.fintrack.backend.dto.request.LoginRequest;
 import me.gabrielporto.fintrack.backend.dto.request.RegisterRequest;
 import me.gabrielporto.fintrack.backend.dto.response.ApiResponse;
+import me.gabrielporto.fintrack.backend.dto.response.MeResponse;
 import me.gabrielporto.fintrack.backend.dto.response.RegisterResponse;
 import me.gabrielporto.fintrack.backend.dto.response.TokenResponse;
 import me.gabrielporto.fintrack.backend.service.AuthService;
@@ -29,4 +30,10 @@ public class AuthController {
     public ResponseEntity<ApiResponse<TokenResponse>> login(@Valid @RequestBody LoginRequest request) {
         return ResponseEntity.ok(ApiResponse.success(authService.login(request), "Login realizado com sucesso"));
     }
+
+    @GetMapping("/me")
+    public ResponseEntity<ApiResponse<MeResponse>> me() {
+        return ResponseEntity.ok(ApiResponse.success(authService.me(), "Dados do usuário obtidos com sucesso"));
+    }
+
 }
