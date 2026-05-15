@@ -8,6 +8,7 @@ import me.gabrielporto.fintrack.backend.dto.response.CategoryResponse;
 import me.gabrielporto.fintrack.backend.exception.BusinessException;
 import me.gabrielporto.fintrack.backend.exception.ResourceNotFoundException;
 import me.gabrielporto.fintrack.backend.repository.CategoryRepository;
+import me.gabrielporto.fintrack.backend.repository.TransactionRepository;
 import me.gabrielporto.fintrack.backend.repository.UserRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.util.UUID;
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final TransactionRepository transactionRepository;
     private final UserRepository userRepository;
 
     public List<CategoryResponse> findAll() {
@@ -70,6 +72,12 @@ public class CategoryService {
         User user = getAuthenticatedUser();
         Category category = categoryRepository.findByIdAndUserId(id, user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada"));
+
+        if (transactionRepository.existsByCategoryId(id)) {
+            throw new BusinessException(
+                    "Não é possível excluir categoria com transações vinculadas");
+        }
+
         categoryRepository.delete(category);
     }
 
