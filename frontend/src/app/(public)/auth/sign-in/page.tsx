@@ -7,8 +7,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { useAuth } from '@/contexts/auth-context'
 import { getErrorMessage } from '@/lib/utils'
-import { authService } from '@/lib/api/auth'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { ArrowLeft } from 'lucide-react'
@@ -16,6 +16,7 @@ import { toast } from 'sonner'
 import Link from 'next/link'
 
 const SignInPage = () => {
+  const { login } = useAuth()
   const router = useRouter()
 
   const {
@@ -23,13 +24,13 @@ const SignInPage = () => {
     handleSubmit,
     formState: { errors, isSubmitting }
   } = useForm<LoginSchemaType>({
-    resolver: zodResolver(loginSchema)
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: '', password: '' }
   })
 
   const onSubmit = async (data: LoginSchemaType) => {
     try {
-      const response = await authService.login(data)
-
+      const response = await login(data)
       toast.success(response.message)
       router.push('/dashboard')
     } catch (err) {

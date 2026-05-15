@@ -7,8 +7,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { useAuth } from '@/contexts/auth-context'
 import { getErrorMessage } from '@/lib/utils'
-import { authService } from '@/lib/api/auth'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { ArrowLeft } from 'lucide-react'
@@ -16,18 +16,20 @@ import { toast } from 'sonner'
 import Link from 'next/link'
 
 const SignUpPage = () => {
+  const { register: signUp } = useAuth()
   const router = useRouter()
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting }
   } = useForm<RegisterSchemaType>({
-    resolver: zodResolver(registerSchema)
+    resolver: zodResolver(registerSchema),
+    defaultValues: { name: '', email: '', password: '' }
   })
 
   const onSubmit = async (data: RegisterSchemaType) => {
     try {
-      await authService.register(data)
+      await signUp(data)
       toast.success('Conta criada com sucesso!', { description: 'Faça login para continuar.' })
       router.push('/auth/sign-in')
     } catch (err) {

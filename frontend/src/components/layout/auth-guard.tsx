@@ -1,37 +1,21 @@
 'use client'
 
 import { LoadingSpinner } from '@/components/shared/loading-spinner'
-import { clearToken, getToken } from '@/lib/token'
+import { useAuth } from '@/contexts/auth-context'
 import { useRouter } from 'next/navigation'
-import { useEffect, useMemo } from 'react'
+import { useEffect } from 'react'
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
+  const { user, isLoading } = useAuth()
   const router = useRouter()
 
-  const isAuthorized = useMemo(() => {
-    const token = getToken()
-
-    if (!token) return false
-
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]))
-      const now = new Date().getTime() / 1000
-      const isExpired = payload.exp < now
-
-      return !isExpired
-    } catch {
-      clearToken()
-      return false
-    }
-  }, [])
-
   useEffect(() => {
-    if (!isAuthorized) {
+    if (!isLoading && !user) {
       router.replace('/auth/sign-in')
     }
-  }, [isAuthorized, router])
+  }, [isLoading, user, router])
 
-  if (!isAuthorized) {
+  if (isLoading || !user) {
     return (
       <div className='min-h-screen bg-background flex items-center justify-center'>
         <LoadingSpinner />

@@ -1,3 +1,4 @@
+import { Providers } from '@/components/layout/providers'
 import { Inter, JetBrains_Mono } from 'next/font/google'
 import { Toaster } from '@/components/ui/sonner'
 import type { Metadata } from 'next'
@@ -16,8 +17,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang='pt-BR' className={cn('h-full antialiased scroll-smooth', inter.variable, jetbrainsMono.variable)}>
       <body className='min-h-full flex flex-col font-sans bg-background text-foreground'>
-        <Toaster position='top-right' richColors duration={2000} />
-        {children}
+        <Providers>
+          <Toaster position='top-right' richColors duration={2000} />
+          {children}
+        </Providers>
       </body>
     </html>
   )
