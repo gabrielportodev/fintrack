@@ -40,7 +40,7 @@ export const GoalList = ({ goals, loading, onEdit, onDelete }: GoalListProps) =>
 
   return (
     <>
-      <div className='grid grid-cols-3 gap-4'>
+      <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3'>
         {goals.map(goal => {
           const pct = goal.limitAmount > 0 ? Math.round((goal.spentAmount / goal.limitAmount) * 100) : 0
           const bar = progressColor(pct)

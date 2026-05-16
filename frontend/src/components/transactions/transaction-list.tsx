@@ -41,6 +41,7 @@ export const TransactionList = ({ transactions, loading, onEdit, onDelete }: Tra
   return (
     <>
       <Card className='p-0 gap-0'>
+        <div className='overflow-x-auto'>
         <Table>
           <TableHeader>
             <TableRow className='border-border hover:bg-transparent'>
@@ -128,6 +129,7 @@ export const TransactionList = ({ transactions, loading, onEdit, onDelete }: Tra
             })}
           </TableBody>
         </Table>
+        </div>
       </Card>
 
       <ConfirmDialog

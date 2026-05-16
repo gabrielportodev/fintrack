@@ -34,7 +34,7 @@ export const TransactionFilters = ({ filter, onFilterChange, month, year, onMont
   const currentValue = `${month}-${year}`
 
   return (
-    <div className='flex items-center gap-3'>
+    <div className='flex flex-wrap items-center gap-3'>
       <Select
         value={currentValue}
         onValueChange={val => {

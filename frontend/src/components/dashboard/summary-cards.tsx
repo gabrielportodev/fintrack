@@ -19,7 +19,7 @@ export const SummaryCards = ({ income, expense, balance, count, loading }: Summa
   ]
 
   return (
-    <div className='grid grid-cols-4 gap-4'>
+    <div className='grid grid-cols-2 gap-4 lg:grid-cols-4'>
       {cards.map(({ label, value, accent, icon: Icon }) => (
         <Card key={label} className='p-5 gap-0'>
           <div className='flex items-center justify-between mb-4'>

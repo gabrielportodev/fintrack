@@ -18,7 +18,7 @@ export const ReportSummary = ({ income, expense, balance, loading, periodLabel }
   ]
 
   return (
-    <div className='grid grid-cols-3 gap-4'>
+    <div className='grid grid-cols-1 gap-4 sm:grid-cols-3'>
       {cards.map(({ label, value, icon: Icon, color }) => (
         <Card key={label} className='p-5 gap-0'>
           <div className='flex items-center justify-between mb-3'>

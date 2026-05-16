@@ -157,7 +157,7 @@ const ReportsPage = () => {
   }
 
   return (
-    <div className='flex flex-col h-full overflow-y-auto'>
+    <div className='flex flex-col flex-1 min-h-0 overflow-y-auto'>
       <PageHeader
         title='Relatórios'
         subtitle='Visão geral do período selecionado'
@@ -181,7 +181,7 @@ const ReportsPage = () => {
           />
         }
       />
-      <div className='flex-1 px-8 py-6 flex flex-col gap-6'>
+      <div className='flex-1 px-4 py-5 flex flex-col gap-6 sm:px-8 sm:py-6'>
         <ReportSummary
           income={totals.income}
           expense={totals.expense}

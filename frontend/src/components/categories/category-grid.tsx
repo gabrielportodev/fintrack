@@ -22,8 +22,8 @@ export const CategoryGrid = ({ categories, loading, onNew, onEdit, onDelete }: C
   const [pendingDelete, setPendingDelete] = useState<string | null>(null)
 
   return (
-    <div className='flex-1 px-8 py-6'>
-      <div className='grid grid-cols-3 xl:grid-cols-4 gap-4'>
+    <div className='flex-1 px-4 py-5 sm:px-8 sm:py-6'>
+      <div className='grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-4'>
         {loading ? (
           <div className='col-span-full'>
             <Loading />

@@ -73,16 +73,16 @@ const DashboardPage = () => {
   const firstName = user?.name.split(' ')[0] ?? 'Usuário'
 
   return (
-    <div className='flex flex-col h-full overflow-y-auto'>
-      <header className='flex items-end justify-between px-8 py-7 border-b border-border shrink-0'>
+    <div className='flex flex-col flex-1 min-h-0 overflow-y-auto'>
+      <header className='flex items-end justify-between px-4 py-5 border-b border-border shrink-0 sm:px-8 sm:py-7'>
         <div>
-          <h1 className='text-2xl font-semibold tracking-tight'>Olá, {firstName}</h1>
+          <h1 className='text-xl font-semibold tracking-tight sm:text-2xl'>Olá, {firstName}</h1>
           <p className='text-sm text-muted-foreground mt-1'>
             {monthLabel.charAt(0).toUpperCase() + monthLabel.slice(1)}
           </p>
         </div>
       </header>
-      <div className='flex-1 px-8 py-6 flex flex-col gap-6'>
+      <div className='flex-1 px-4 py-5 flex flex-col gap-6 sm:px-8 sm:py-6'>
         <SummaryCards
           income={summary.income}
           expense={summary.expense}

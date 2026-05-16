@@ -9,7 +9,6 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
-  Menu,
   LucideIcon
 } from 'lucide-react'
 import { LogoIcon } from '@/components/shared/logo-icon'
@@ -156,9 +155,13 @@ function SidebarContent({ collapsed, isMobile, onNavigate, onToggleCollapse }: S
   )
 }
 
-export function Sidebar() {
+interface SidebarProps {
+  mobileOpen: boolean
+  onMobileOpenChange: (open: boolean) => void
+}
+
+export function Sidebar({ mobileOpen, onMobileOpenChange }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false)
-  const [mobileOpen, setMobileOpen] = useState(false)
 
   return (
     <Fragment>
@@ -166,20 +169,11 @@ export function Sidebar() {
         <SidebarContent collapsed={collapsed} isMobile={false} onToggleCollapse={() => setCollapsed(c => !c)} />
       </div>
 
-      <Button
-        variant='outline'
-        size='icon'
-        onClick={() => setMobileOpen(true)}
-        className='fixed top-4 left-4 z-40 md:hidden rounded-lg'
-      >
-        <Menu size={18} />
-      </Button>
-
       {mobileOpen && (
         <Fragment>
-          <div className='fixed inset-0 z-40 bg-black/50 md:hidden' onClick={() => setMobileOpen(false)} />
+          <div className='fixed inset-0 z-40 bg-black/50 md:hidden' onClick={() => onMobileOpenChange(false)} />
           <div className='fixed inset-y-0 left-0 z-50 md:hidden flex'>
-            <SidebarContent collapsed={false} isMobile={true} onNavigate={() => setMobileOpen(false)} />
+            <SidebarContent collapsed={false} isMobile={true} onNavigate={() => onMobileOpenChange(false)} />
           </div>
         </Fragment>
       )}

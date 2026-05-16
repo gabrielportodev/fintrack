@@ -42,14 +42,14 @@ export const MonthlyChart = ({ monthlyData, pieData, loading, currentMonthLabel 
   const label = currentMonthLabel.charAt(0).toUpperCase() + currentMonthLabel.slice(1)
 
   return (
-    <div className='grid grid-cols-5 gap-4'>
-      <Card className='col-span-3 p-5 gap-0'>
+    <div className='grid grid-cols-1 gap-4 lg:grid-cols-5'>
+      <Card className='col-span-1 p-5 gap-0 lg:col-span-3'>
         <div className='flex items-start justify-between mb-5'>
           <div>
             <p className='font-semibold'>Receitas × Despesas</p>
             <p className='text-xs text-muted-foreground mt-0.5'>Últimos 6 meses</p>
           </div>
-          <div className='flex gap-4 text-xs text-muted-foreground'>
+          <div className='flex flex-wrap gap-3 text-xs text-muted-foreground'>
             <span className='flex items-center gap-1.5'>
               <span className='w-2.5 h-2.5 rounded-sm bg-primary inline-block' />
               Receitas
@@ -74,7 +74,7 @@ export const MonthlyChart = ({ monthlyData, pieData, loading, currentMonthLabel 
         )}
       </Card>
 
-      <Card className='col-span-2 p-5 gap-0'>
+      <Card className='col-span-1 p-5 gap-0 lg:col-span-2'>
         <div className='mb-4'>
           <p className='font-semibold'>Gastos por categoria</p>
           <p className='text-xs text-muted-foreground mt-0.5'>{label}</p>

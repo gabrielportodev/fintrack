@@ -86,12 +86,12 @@ const GoalsPage = () => {
     : `${currentLabel} · ${activeCount} ${activeCount === 1 ? 'meta ativa' : 'metas ativas'}`
 
   return (
-    <div className='flex flex-col h-full overflow-y-auto'>
+    <div className='flex flex-col flex-1 min-h-0 overflow-y-auto'>
       <PageHeader
         title='Metas'
         subtitle={subtitle}
         action={
-          <div className='flex items-center gap-3'>
+          <div className='flex flex-wrap items-center gap-3'>
             <Select value={`${month}-${year}`} onValueChange={handleMonthChange}>
               <SelectTrigger className='w-40'>
                 <SelectValue />
@@ -111,7 +111,7 @@ const GoalsPage = () => {
           </div>
         }
       />
-      <div className='flex-1 px-8 py-6'>
+      <div className='flex-1 px-4 py-5 sm:px-8 sm:py-6'>
         <GoalList goals={goals} loading={loading} onEdit={handleEdit} onDelete={handleDelete} />
       </div>
       <GoalDialog

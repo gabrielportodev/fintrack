@@ -41,10 +41,10 @@ export const RecentTransactions = ({ transactions, loading }: RecentTransactions
                   <p className='text-sm font-medium truncate'>{tx.description}</p>
                   <p className='text-xs text-muted-foreground mt-0.5'>{tx.categoryName}</p>
                 </div>
-                <p className='text-xs text-muted-foreground'>{formatDateShort(tx.date)}</p>
+                <p className='hidden text-xs text-muted-foreground sm:block'>{formatDateShort(tx.date)}</p>
                 <Badge
                   variant='outline'
-                  className='text-[10px] px-2 py-0'
+                  className='hidden text-[10px] px-2 py-0 sm:flex'
                   style={{
                     background: isIncome ? '#22C55E1A' : '#EF44441A',
                     color: isIncome ? '#22C55E' : '#EF4444',

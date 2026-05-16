@@ -46,7 +46,7 @@ export const ReportChart = ({ monthlyData, categoryData, loading, periodLabel }:
             <p className='font-semibold'>Evolução do saldo</p>
             <p className='text-xs text-muted-foreground mt-0.5'>{periodLabel || 'Últimos meses'}</p>
           </div>
-          <div className='flex gap-4 text-xs text-muted-foreground'>
+          <div className='flex flex-wrap gap-3 text-xs text-muted-foreground'>
             <span className='flex items-center gap-1.5'>
               <span className='w-8 h-0.5 bg-primary inline-block rounded-full' />
               Saldo
@@ -116,6 +116,7 @@ export const ReportChart = ({ monthlyData, categoryData, loading, periodLabel }:
         ) : categoryData.length === 0 ? (
           <div className='py-10 text-center text-sm text-muted-foreground'>Sem despesas no período</div>
         ) : (
+          <div className='overflow-x-auto'>
           <Table>
             <TableHeader>
               <TableRow className='border-border hover:bg-transparent'>
@@ -152,6 +153,7 @@ export const ReportChart = ({ monthlyData, categoryData, loading, periodLabel }:
               ))}
             </TableBody>
           </Table>
+          </div>
         )}
       </Card>
     </div>
