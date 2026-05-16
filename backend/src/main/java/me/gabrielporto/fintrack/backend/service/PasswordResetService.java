@@ -54,6 +54,8 @@ public class PasswordResetService {
 
     @Transactional
     public ResetTokenResponse verifyCode(VerifyCodeRequest request) {
+        try { Thread.sleep(500); } catch (InterruptedException ignored) { Thread.currentThread().interrupt(); }
+
         PasswordResetToken token = tokenRepository
                 .findByEmailAndCodeAndUsedFalse(request.getEmail(), request.getCode())
                 .orElseThrow(() -> new BusinessException("Código inválido ou expirado"));
