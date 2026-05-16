@@ -2,33 +2,44 @@ package me.gabrielporto.fintrack.backend.service;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.Map;
 import java.util.Objects;
 
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
 
 @Service
 @RequiredArgsConstructor
 public class EmailService {
 
-    private final JavaMailSender mailSender;
+    @Value("${resend.api.key}")
+    private String resendApiKey;
+
+    private final WebClient webClient = WebClient.create("https://api.resend.com");
 
     public void sendPasswordResetCode(String email, String code) {
+        Map<String, Object> body = Map.of(
+            "from", "Fintrack <contact@send.gabrielporto.me>",
+            "to", email,
+            "subject", "Fintrack — Código de redefinição de senha",
+            "html", buildEmailBody(code)
+        );
+
         try {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-
-            helper.setTo(Objects.requireNonNull(email, "Email não pode ser nulo"));
-            helper.setSubject(Objects.requireNonNull("Fintrack — Código de redefinição de senha"));
-            helper.setText(Objects.requireNonNull(buildEmailBody(code)), true);
-
-            mailSender.send(message);
-        } catch (MessagingException e) {
-            throw new RuntimeException("Erro ao enviar email", e);
+            webClient.post()
+                .uri("/emails")
+                .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                .header("Authorization", "Bearer " + resendApiKey)
+                .bodyValue(Objects.requireNonNull(body))
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+        } catch (WebClientResponseException e) {
+            throw new RuntimeException("Erro ao enviar email: " + e.getResponseBodyAsString(), e);
         }
     }
 
