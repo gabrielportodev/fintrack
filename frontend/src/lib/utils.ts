@@ -8,7 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export function getErrorMessage(err: unknown, fallback = 'Algo deu errado. Tente novamente.') {
   if (axios.isAxiosError(err)) {
-    return err.response?.data?.message || fallback
+    return err.response?.data?.message || err.response?.data?.error || fallback
   }
   return fallback
 }

@@ -5,10 +5,17 @@ export const loginSchema = z.object({
   password: z.string().min(6, 'Senha deve ter no mínimo 6 caracteres')
 })
 
+const strongPassword = z
+  .string()
+  .min(8, 'Mínimo 8 caracteres')
+  .regex(/[A-Z]/, 'Deve ter pelo menos uma letra maiúscula')
+  .regex(/[a-z]/, 'Deve ter pelo menos uma letra minúscula')
+  .regex(/[0-9]/, 'Deve ter pelo menos um número')
+
 export const registerSchema = z.object({
   name: z.string().min(2, 'Nome deve ter no mínimo 2 caracteres'),
   email: z.string().email('E-mail inválido'),
-  password: z.string().min(6, 'Senha deve ter no mínimo 6 caracteres')
+  password: strongPassword
 })
 
 export type LoginSchemaType = z.infer<typeof loginSchema>
@@ -27,7 +34,7 @@ export const verifyCodeSchema = z.object({
 
 export const resetPasswordSchema = z
   .object({
-    newPassword: z.string().min(6, 'Senha deve ter no mínimo 6 caracteres'),
+    newPassword: strongPassword,
     confirmPassword: z.string().min(1, 'Confirmação de senha é obrigatória')
   })
   .refine(data => data.newPassword === data.confirmPassword, {
