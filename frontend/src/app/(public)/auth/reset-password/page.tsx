@@ -17,11 +17,13 @@ import Link from 'next/link'
 
 const ResetPasswordPage = () => {
   const router = useRouter()
-  const [resetToken] = useState(() => sessionStorage.getItem('reset_token') ?? '')
+  const [resetToken, setResetToken] = useState('')
 
   useEffect(() => {
-    if (!resetToken) router.replace('/auth/forgot-password')
-  }, [resetToken, router])
+    const token = sessionStorage.getItem('reset_token') ?? ''
+    setResetToken(token)
+    if (!token) router.replace('/auth/forgot-password')
+  }, [router])
 
   const {
     register,
