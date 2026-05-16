@@ -141,9 +141,9 @@ export const Hero = () => {
           className='rounded-2xl overflow-hidden border border-border bg-card text-left'
           style={{ boxShadow: '0 30px 80px -20px rgba(99,102,241,0.22), 0 0 0 1px rgba(255,255,255,0.02)' }}
         >
-          <div className='flex' style={{ height: 480 }}>
-            <aside className='w-[200px] bg-[#13151F] border-r border-white/5 flex flex-col shrink-0'>
-              <div className='p-5 flex items-center gap-2.5'>
+          <div className='flex h-[340px] sm:h-[420px] md:h-[480px]'>
+            <aside className='hidden sm:flex w-[160px] md:w-[200px] bg-[#13151F] border-r border-white/5 flex-col shrink-0'>
+              <div className='p-4 md:p-5 flex items-center gap-2.5'>
                 <svg width='22' height='22' viewBox='0 0 24 24' fill='none'>
                   <rect x='2' y='2' width='20' height='20' rx='6' fill='#6366F1' />
                   <path d='M8 16V8h7' stroke='#fff' strokeWidth='2.2' strokeLinecap='round' />
@@ -152,7 +152,7 @@ export const Hero = () => {
                 </svg>
                 <span className='text-sm font-semibold'>Fintrack</span>
               </div>
-              <nav className='px-3 flex flex-col gap-0.5'>
+              <nav className='px-2 md:px-3 flex flex-col gap-0.5'>
                 {[
                   { label: 'Dashboard', active: true },
                   { label: 'Transações', active: false },
@@ -162,7 +162,7 @@ export const Hero = () => {
                 ].map(item => (
                   <div
                     key={item.label}
-                    className='px-3 py-2 rounded-lg text-[13px] font-medium'
+                    className='px-3 py-2 rounded-lg text-[12px] md:text-[13px] font-medium'
                     style={{
                       color: item.active ? '#6366F1' : '#94A3B8',
                       background: item.active ? 'rgba(99,102,241,0.1)' : 'transparent'
@@ -174,31 +174,33 @@ export const Hero = () => {
               </nav>
             </aside>
 
-            <div className='flex-1 bg-[#0F1117] p-6 overflow-hidden'>
-              <div className='flex justify-between items-end mb-5'>
+            <div className='flex-1 bg-[#0F1117] p-3.5 sm:p-5 md:p-6 overflow-hidden'>
+              <div className='flex justify-between items-end mb-3 sm:mb-5'>
                 <div>
-                  <div className='text-lg font-semibold'>Olá, Gabriel</div>
-                  <div className='text-xs text-muted-foreground mt-0.5'>Maio de 2026</div>
+                  <div className='text-sm sm:text-base md:text-lg font-semibold'>Olá, Gabriel</div>
+                  <div className='text-[11px] text-muted-foreground mt-0.5'>Maio de 2026</div>
                 </div>
               </div>
 
-              <div className='grid grid-cols-4 gap-3 mb-4'>
+              <div className='grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mb-3 sm:mb-4'>
                 {mockCards.map(card => (
-                  <div key={card.label} className='rounded-xl border border-white/5 bg-[#1A1D27] p-3.5'>
-                    <p className='text-[11px] text-muted-foreground mb-1.5'>{card.label}</p>
-                    <p className={`font-mono text-[17px] font-semibold ${card.color}`}>{card.value}</p>
+                  <div key={card.label} className='rounded-xl border border-white/5 bg-[#1A1D27] p-2.5 sm:p-3.5'>
+                    <p className='text-[10px] sm:text-[11px] text-muted-foreground mb-1 sm:mb-1.5'>{card.label}</p>
+                    <p className={`font-mono text-sm sm:text-base md:text-[17px] font-semibold ${card.color}`}>
+                      {card.value}
+                    </p>
                   </div>
                 ))}
               </div>
 
-              <div className='rounded-xl border border-white/5 bg-[#1A1D27] p-4'>
-                <div className='text-xs font-medium text-muted-foreground mb-3'>Receitas vs Despesas</div>
-                <div className='flex items-end gap-4 h-[160px] pb-1'>
+              <div className='rounded-xl border border-white/5 bg-[#1A1D27] p-3 sm:p-4'>
+                <div className='text-[11px] font-medium text-muted-foreground mb-2 sm:mb-3'>Receitas vs Despesas</div>
+                <div className='flex items-end gap-1.5 sm:gap-3 md:gap-4 h-[100px] sm:h-[130px] md:h-[160px] pb-1'>
                   {mockBars.map(({ r, d, m }) => {
                     const max = 88
                     return (
-                      <div key={m} className='flex-1 flex flex-col items-center gap-1.5 h-full'>
-                        <div className='w-full flex-1 flex items-end gap-1'>
+                      <div key={m} className='flex-1 flex flex-col items-center gap-1 sm:gap-1.5 h-full'>
+                        <div className='w-full flex-1 flex items-end gap-0.5 sm:gap-1'>
                           <div
                             className='flex-1 rounded-t-sm'
                             style={{ height: `${(r / max) * 100}%`, background: '#22C55E', opacity: 0.85 }}
@@ -208,7 +210,7 @@ export const Hero = () => {
                             style={{ height: `${(d / max) * 100}%`, background: '#EF4444', opacity: 0.85 }}
                           />
                         </div>
-                        <span className='text-[10px] text-muted-foreground uppercase'>{m}</span>
+                        <span className='text-[9px] sm:text-[10px] text-muted-foreground uppercase'>{m}</span>
                       </div>
                     )
                   })}
