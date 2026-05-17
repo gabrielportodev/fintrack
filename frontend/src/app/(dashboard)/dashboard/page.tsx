@@ -27,25 +27,24 @@ const DashboardPage = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const [txRes, summaryRes] = await Promise.all([
+        const rangeStart = new Date(year, month - 1 - 5, 1)
+        const startMonth = rangeStart.getMonth() + 1
+        const startYear = rangeStart.getFullYear()
+
+        const [txRes, summaryRangeRes] = await Promise.all([
           transactionService.getByMonth(month, year),
-          transactionService.getSummary(month, year)
+          transactionService.getSummaryRange(startMonth, startYear, month, year)
         ])
         setTransactions(txRes.data)
-        setSummary(summaryRes.data)
 
-        const months6 = Array.from({ length: 6 }, (_, i) => {
-          const d = new Date(year, month - 1 - i, 1)
-          return { month: d.getMonth() + 1, year: d.getFullYear() }
-        }).reverse()
-
-        const summaries = await Promise.all(months6.map(m => transactionService.getSummary(m.month, m.year)))
+        const currentSummary = summaryRangeRes.data.find(s => s.month === month && s.year === year)
+        setSummary({ income: currentSummary?.income ?? 0, expense: currentSummary?.expense ?? 0, balance: currentSummary?.balance ?? 0 })
 
         setMonthlyStats(
-          months6.map((m, i) => ({
-            month: new Date(m.year, m.month - 1).toLocaleDateString('pt-BR', { month: 'short' }).replace('.', ''),
-            receitas: Number(summaries[i].data.income),
-            despesas: Number(summaries[i].data.expense)
+          summaryRangeRes.data.map(s => ({
+            month: new Date(s.year, s.month - 1).toLocaleDateString('pt-BR', { month: 'short' }).replace('.', ''),
+            receitas: Number(s.income),
+            despesas: Number(s.expense)
           }))
         )
       } catch {

@@ -21,3 +21,11 @@ export type MonthlySummaryType = {
   expense: number
   balance: number
 }
+
+export type MonthlySummaryRangeType = {
+  month: number
+  year: number
+  income: number
+  expense: number
+  balance: number
+}

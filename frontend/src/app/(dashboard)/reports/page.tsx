@@ -79,25 +79,28 @@ const ReportsPage = () => {
           return
         }
 
-        const [summaries, txLists] = await Promise.all([
-          Promise.all(range.map(r => transactionService.getSummary(r.month, r.year))),
-          Promise.all(range.map(r => transactionService.getByMonth(r.month, r.year)))
+        const firstMonth = range[0]
+        const lastMonth = range[range.length - 1]
+
+        const [summariesRes, txRangeRes] = await Promise.all([
+          transactionService.getSummaryRange(firstMonth.month, firstMonth.year, lastMonth.month, lastMonth.year),
+          transactionService.getByRange(firstMonth.month, firstMonth.year, lastMonth.month, lastMonth.year)
         ])
 
         setMonthlyData(
-          range.map((r, i) => ({
-            month: MONTH_ABBR[r.month - 1],
-            receitas: summaries[i].data.income,
-            despesas: summaries[i].data.expense,
-            saldo: summaries[i].data.balance
+          summariesRes.data.map(s => ({
+            month: MONTH_ABBR[s.month - 1],
+            receitas: s.income,
+            despesas: s.expense,
+            saldo: s.balance
           }))
         )
 
-        const income = summaries.reduce((s, r) => s + r.data.income, 0)
-        const expense = summaries.reduce((s, r) => s + r.data.expense, 0)
+        const income = summariesRes.data.reduce((sum, s) => sum + s.income, 0)
+        const expense = summariesRes.data.reduce((sum, s) => sum + s.expense, 0)
         setTotals({ income, expense, balance: income - expense })
 
-        const flatTx = txLists.flatMap(r => r.data)
+        const flatTx = txRangeRes.data
         setAllTransactions(flatTx)
 
         const allExpenses = flatTx.filter(tx => tx.type === TransactionTypeEnum.EXPENSE)

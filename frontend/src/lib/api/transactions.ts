@@ -1,4 +1,4 @@
-import type { MonthlySummaryType, TransactionType } from '@/types/transaction'
+import type { MonthlySummaryRangeType, MonthlySummaryType, TransactionType } from '@/types/transaction'
 import { TransactionTypeEnum } from '@/types/transaction'
 import type { ApiResponse } from '@/types/api'
 import { api } from '@/lib/api/client'
@@ -34,6 +34,20 @@ export const transactionService = {
     api
       .get<ApiResponse<MonthlySummaryType>>('/api/transactions/summary', {
         params: { month, year }
+      })
+      .then(r => r.data),
+
+  getSummaryRange: (startMonth: number, startYear: number, endMonth: number, endYear: number) =>
+    api
+      .get<ApiResponse<MonthlySummaryRangeType[]>>('/api/transactions/summary/range', {
+        params: { startMonth, startYear, endMonth, endYear }
+      })
+      .then(r => r.data),
+
+  getByRange: (startMonth: number, startYear: number, endMonth: number, endYear: number) =>
+    api
+      .get<ApiResponse<TransactionType[]>>('/api/transactions/range', {
+        params: { startMonth, startYear, endMonth, endYear }
       })
       .then(r => r.data)
 }
