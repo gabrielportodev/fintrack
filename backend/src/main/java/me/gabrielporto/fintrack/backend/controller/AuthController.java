@@ -3,6 +3,7 @@ package me.gabrielporto.fintrack.backend.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import me.gabrielporto.fintrack.backend.dto.request.LoginRequest;
+import me.gabrielporto.fintrack.backend.dto.request.RefreshRequest;
 import me.gabrielporto.fintrack.backend.dto.request.RegisterRequest;
 import me.gabrielporto.fintrack.backend.dto.response.ApiResponse;
 import me.gabrielporto.fintrack.backend.dto.response.MeResponse;
@@ -29,6 +30,11 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<TokenResponse>> login(@Valid @RequestBody LoginRequest request) {
         return ResponseEntity.ok(ApiResponse.success(authService.login(request), "Login realizado com sucesso"));
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<ApiResponse<TokenResponse>> refresh(@Valid @RequestBody RefreshRequest request) {
+        return ResponseEntity.ok(ApiResponse.success(authService.refresh(request.getRefreshToken()), "Token renovado com sucesso"));
     }
 
     @GetMapping("/me")

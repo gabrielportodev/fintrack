@@ -20,6 +20,9 @@ public class JwtService {
     @Value("${jwt.expiration}")
     private long expiration;
 
+    @Value("${jwt.refresh-expiration}")
+    private long refreshExpiration;
+
     private SecretKey getSigningKey() {
         return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
@@ -33,13 +36,31 @@ public class JwtService {
                 .compact();
     }
 
+    public String generateRefreshToken(UserDetails userDetails) {
+        return Jwts.builder()
+                .subject(userDetails.getUsername())
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + refreshExpiration))
+                .claim("type", "refresh")
+                .signWith(getSigningKey())
+                .compact();
+    }
+
     public String extractEmail(String token) {
         return extractClaims(token).getSubject();
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String email = extractEmail(token);
-        return email.equals(userDetails.getUsername()) && !isTokenExpired(token);
+        return email.equals(userDetails.getUsername()) && !isTokenExpired(token) && !isRefreshToken(token);
+    }
+
+    public boolean isRefreshTokenValid(String token) {
+        return isRefreshToken(token) && !isTokenExpired(token);
+    }
+
+    private boolean isRefreshToken(String token) {
+        return "refresh".equals(extractClaims(token).get("type", String.class));
     }
 
     private boolean isTokenExpired(String token) {

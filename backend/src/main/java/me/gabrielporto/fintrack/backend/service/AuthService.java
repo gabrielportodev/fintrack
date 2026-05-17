@@ -57,9 +57,30 @@ public class AuthService {
         }
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
-        String token = jwtService.generateToken(userDetails);
+        String accessToken = jwtService.generateToken(userDetails);
+        String refreshToken = jwtService.generateRefreshToken(userDetails);
 
-        return new TokenResponse(token);
+        return new TokenResponse(accessToken, refreshToken);
+    }
+
+    public TokenResponse refresh(String refreshToken) {
+        try {
+            String email = jwtService.extractEmail(refreshToken);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+
+            if (!jwtService.isRefreshTokenValid(refreshToken)) {
+                throw new InvalidCredentialsException();
+            }
+
+            String newAccessToken = jwtService.generateToken(userDetails);
+            String newRefreshToken = jwtService.generateRefreshToken(userDetails);
+
+            return new TokenResponse(newAccessToken, newRefreshToken);
+        } catch (InvalidCredentialsException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new InvalidCredentialsException();
+        }
     }
 
     public MeResponse me() {
