@@ -33,5 +33,25 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
     @Query("SELECT t FROM Transaction t WHERE t.user.id = :userId AND MONTH(t.date) = :month AND YEAR(t.date) = :year ORDER BY t.date DESC")
     List<Transaction> findAllByUserIdAndMonthAndYear(@Param("userId") UUID userId, @Param("month") int month, @Param("year") int year);
 
+    @Query("SELECT t FROM Transaction t WHERE t.user.id = :userId " +
+           "AND (YEAR(t.date) > :startYear OR (YEAR(t.date) = :startYear AND MONTH(t.date) >= :startMonth)) " +
+           "AND (YEAR(t.date) < :endYear OR (YEAR(t.date) = :endYear AND MONTH(t.date) <= :endMonth)) " +
+           "ORDER BY t.date DESC")
+    List<Transaction> findAllByUserIdInRange(@Param("userId") UUID userId,
+                                             @Param("startMonth") int startMonth, @Param("startYear") int startYear,
+                                             @Param("endMonth") int endMonth, @Param("endYear") int endYear);
+
+    @Query("SELECT MONTH(t.date), YEAR(t.date), " +
+           "COALESCE(SUM(CASE WHEN t.type = 'INCOME' THEN t.amount ELSE 0 END), 0), " +
+           "COALESCE(SUM(CASE WHEN t.type = 'EXPENSE' THEN t.amount ELSE 0 END), 0) " +
+           "FROM Transaction t WHERE t.user.id = :userId " +
+           "AND (YEAR(t.date) > :startYear OR (YEAR(t.date) = :startYear AND MONTH(t.date) >= :startMonth)) " +
+           "AND (YEAR(t.date) < :endYear OR (YEAR(t.date) = :endYear AND MONTH(t.date) <= :endMonth)) " +
+           "GROUP BY YEAR(t.date), MONTH(t.date) " +
+           "ORDER BY YEAR(t.date) ASC, MONTH(t.date) ASC")
+    List<Object[]> findMonthlySummaryInRange(@Param("userId") UUID userId,
+                                             @Param("startMonth") int startMonth, @Param("startYear") int startYear,
+                                             @Param("endMonth") int endMonth, @Param("endYear") int endYear);
+
     boolean existsByCategoryId(UUID categoryId);
 }

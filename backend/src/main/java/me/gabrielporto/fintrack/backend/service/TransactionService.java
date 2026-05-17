@@ -6,6 +6,7 @@ import me.gabrielporto.fintrack.backend.domain.entity.Transaction;
 import me.gabrielporto.fintrack.backend.domain.entity.User;
 import me.gabrielporto.fintrack.backend.domain.enums.TransactionType;
 import me.gabrielporto.fintrack.backend.dto.request.TransactionRequest;
+import me.gabrielporto.fintrack.backend.dto.response.MonthlySummaryResponse;
 import me.gabrielporto.fintrack.backend.dto.response.TransactionResponse;
 import me.gabrielporto.fintrack.backend.exception.ResourceNotFoundException;
 import me.gabrielporto.fintrack.backend.repository.CategoryRepository;
@@ -16,7 +17,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -100,6 +104,36 @@ public class TransactionService {
     public BigDecimal getTotalExpense() {
         User user = getAuthenticatedUser();
         return transactionRepository.sumAmountByUserIdAndType(user.getId(), TransactionType.EXPENSE);
+    }
+
+    public List<TransactionResponse> findByRange(int startMonth, int startYear, int endMonth, int endYear) {
+        User user = getAuthenticatedUser();
+        return transactionRepository.findAllByUserIdInRange(user.getId(), startMonth, startYear, endMonth, endYear)
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    public List<MonthlySummaryResponse> getSummaryRange(int startMonth, int startYear, int endMonth, int endYear) {
+        User user = getAuthenticatedUser();
+        List<Object[]> rows = transactionRepository.findMonthlySummaryInRange(user.getId(), startMonth, startYear, endMonth, endYear);
+
+        Map<String, MonthlySummaryResponse> byKey = new HashMap<>();
+        for (Object[] row : rows) {
+            int month = ((Number) row[0]).intValue();
+            int year = ((Number) row[1]).intValue();
+            BigDecimal income = (BigDecimal) row[2];
+            BigDecimal expense = (BigDecimal) row[3];
+            byKey.put(year + "-" + month, new MonthlySummaryResponse(month, year, income, expense, income.subtract(expense)));
+        }
+
+        List<MonthlySummaryResponse> result = new ArrayList<>();
+        int m = startMonth, y = startYear;
+        while (y < endYear || (y == endYear && m <= endMonth)) {
+            result.add(byKey.getOrDefault(y + "-" + m, new MonthlySummaryResponse(m, y, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO)));
+            if (++m > 12) { m = 1; y++; }
+        }
+        return result;
     }
 
     public BigDecimal getMonthlyIncome(int month, int year) {

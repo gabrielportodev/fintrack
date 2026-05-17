@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import me.gabrielporto.fintrack.backend.dto.request.TransactionRequest;
 import me.gabrielporto.fintrack.backend.dto.response.ApiResponse;
+import me.gabrielporto.fintrack.backend.dto.response.MonthlySummaryResponse;
 import me.gabrielporto.fintrack.backend.dto.response.TransactionResponse;
 import me.gabrielporto.fintrack.backend.service.TransactionService;
 import org.springframework.http.HttpStatus;
@@ -52,6 +53,20 @@ public class TransactionController {
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable UUID id) {
         transactionService.delete(id);
         return ResponseEntity.ok(ApiResponse.success("Transação removida com sucesso"));
+    }
+
+    @GetMapping("/range")
+    public ResponseEntity<ApiResponse<List<TransactionResponse>>> findByRange(
+            @RequestParam int startMonth, @RequestParam int startYear,
+            @RequestParam int endMonth, @RequestParam int endYear) {
+        return ResponseEntity.ok(ApiResponse.success(transactionService.findByRange(startMonth, startYear, endMonth, endYear), "Transações do período listadas com sucesso"));
+    }
+
+    @GetMapping("/summary/range")
+    public ResponseEntity<ApiResponse<List<MonthlySummaryResponse>>> getSummaryRange(
+            @RequestParam int startMonth, @RequestParam int startYear,
+            @RequestParam int endMonth, @RequestParam int endYear) {
+        return ResponseEntity.ok(ApiResponse.success(transactionService.getSummaryRange(startMonth, startYear, endMonth, endYear), "Resumo do período obtido com sucesso"));
     }
 
     @GetMapping("/summary")
