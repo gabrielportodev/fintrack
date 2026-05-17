@@ -23,12 +23,13 @@ const SignUpPage = () => {
     formState: { errors, isSubmitting }
   } = useForm<RegisterSchemaType>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { name: '', email: '', password: '' }
+    defaultValues: { name: '', email: '', password: '', acceptTerms: false }
   })
 
   const onSubmit = async (data: RegisterSchemaType) => {
     try {
-      const { message } = await signUp(data)
+      const { acceptTerms: _, ...signUpData } = data
+      const { message } = await signUp(signUpData)
       toast.success(message)
       router.push('/auth/sign-in')
     } catch (err) {
@@ -98,6 +99,29 @@ const SignUpPage = () => {
               {...register('password')}
             />
             {errors.password && <p className='text-[12px] text-destructive'>{errors.password.message}</p>}
+          </div>
+
+          <div className='flex flex-col gap-1.5'>
+            <label className='flex items-start gap-2.5 cursor-pointer'>
+              <input
+                type='checkbox'
+                className='mt-0.5 h-4 w-4 shrink-0 rounded border border-white/20 bg-transparent accent-primary cursor-pointer'
+                {...register('acceptTerms')}
+              />
+              <span className='text-[12.5px] text-muted-foreground leading-relaxed'>
+                Li e aceito os{' '}
+                <Link href='/termos' target='_blank' className='text-primary hover:underline'>
+                  Termos de Uso
+                </Link>{' '}
+                e a{' '}
+                <Link href='/privacidade' target='_blank' className='text-primary hover:underline'>
+                  Política de Privacidade
+                </Link>
+              </span>
+            </label>
+            {errors.acceptTerms && (
+              <p className='text-[12px] text-destructive'>{errors.acceptTerms.message}</p>
+            )}
           </div>
 
           <Button className='w-full h-10 mt-1' type='submit' disabled={isSubmitting}>

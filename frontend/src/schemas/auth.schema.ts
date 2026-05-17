@@ -15,7 +15,8 @@ const strongPassword = z
 export const registerSchema = z.object({
   name: z.string().min(2, 'Nome deve ter no mínimo 2 caracteres'),
   email: z.string().email('E-mail inválido'),
-  password: strongPassword
+  password: strongPassword,
+  acceptTerms: z.boolean().refine(val => val === true, 'Você deve aceitar os Termos de Uso e a Política de Privacidade')
 })
 
 export type LoginSchemaType = z.infer<typeof loginSchema>
