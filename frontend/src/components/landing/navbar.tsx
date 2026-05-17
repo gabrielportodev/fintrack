@@ -1,6 +1,7 @@
 'use client'
 
 import { LogoIcon } from '@/components/shared/logo-icon'
+import { useAuth } from '@/contexts/auth-context'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { useState } from 'react'
@@ -18,6 +19,8 @@ const scrollTo = (id: string) => {
 
 export const Navbar = () => {
   const [open, setOpen] = useState(false)
+  const { user } = useAuth()
+  const loginHref = user ? '/dashboard' : '/auth/sign-in'
 
   return (
     <>
@@ -42,7 +45,7 @@ export const Navbar = () => {
 
           <div className='hidden md:flex items-center gap-2'>
             <Button variant='ghost' size='sm' asChild className='text-muted-foreground hover:text-foreground'>
-              <Link href='/auth/sign-in'>Entrar</Link>
+              <Link href={loginHref}>Entrar</Link>
             </Button>
             <Button size='sm' asChild>
               <Link href='/auth/sign-up'>Começar grátis</Link>
@@ -104,7 +107,7 @@ export const Navbar = () => {
 
         <div className='p-4 border-t border-white/10 flex flex-col gap-2 shrink-0'>
           <Button variant='outline' asChild className='w-full'>
-            <Link href='/auth/sign-in' onClick={() => setOpen(false)}>
+            <Link href={loginHref} onClick={() => setOpen(false)}>
               Entrar
             </Link>
           </Button>

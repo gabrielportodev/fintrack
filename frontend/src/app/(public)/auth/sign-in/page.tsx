@@ -15,8 +15,13 @@ import { toast } from 'sonner'
 import Link from 'next/link'
 
 const SignInPage = () => {
-  const { login } = useAuth()
+  const { login, user } = useAuth()
   const router = useRouter()
+
+  if (user) {
+    router.replace('/dashboard')
+    return null
+  }
 
   const {
     register,
