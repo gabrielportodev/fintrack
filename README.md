@@ -9,8 +9,8 @@
   <img src="https://img.shields.io/badge/Java-21-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white" />
   <img src="https://img.shields.io/badge/Spring%20Boot-3.5.14-6DB33F?style=for-the-badge&logo=spring&logoColor=white" />
   <img src="https://img.shields.io/badge/Next.js-16.2.6-000000?style=for-the-badge&logo=next.js&logoColor=white" />
-  <img src="https://img.shields.io/badge/TypeScript-5.9.3-3178C6?style=for-the-badge&logo=typescript&logoColor=white" />
-  <img src="https://img.shields.io/badge/PostgreSQL-16.13-336791?style=for-the-badge&logo=postgresql&logoColor=white" />
+  <img src="https://img.shields.io/badge/TypeScript-5.x-3178C6?style=for-the-badge&logo=typescript&logoColor=white" />
+  <img src="https://img.shields.io/badge/PostgreSQL-16+-336791?style=for-the-badge&logo=postgresql&logoColor=white" />
 </div>
 
 ---
@@ -23,7 +23,7 @@ O **Fintrack** é uma aplicação web full stack de finanças pessoais que permi
 
 ## Funcionalidades
 
-- Autenticação completa com JWT (registro e login)
+- Autenticação completa com JWT (registro, login e recuperação de senha por e-mail)
 - Controle de receitas e despesas com categorias
 - Categorias personalizadas com cor e ícone
 - Metas mensais por categoria com barra de progresso
@@ -36,13 +36,17 @@ O **Fintrack** é uma aplicação web full stack de finanças pessoais que permi
 
 ## Telas
 
-| Dashboard      | Transações      |
-| -------------- | --------------- |
-| ![Dashboard]() | ![Transações]() |
+| Landing Page                             | Login                      | Cadastro                         |
+| ---------------------------------------- | -------------------------- | -------------------------------- |
+| ![Landing Page](assets/landing-page.png) | ![Login](assets/login.png) | ![Cadastro](assets/register.png) |
 
-| Categorias      | Metas      |
-| --------------- | ---------- |
-| ![Categorias]() | ![Metas]() |
+| Dashboard                          | Transações                           |
+| ---------------------------------- | ------------------------------------ |
+| ![Dashboard](assets/dashboard.png) | ![Transações](assets/transacoes.png) |
+
+| Categorias                           | Metas                      |
+| ------------------------------------ | -------------------------- |
+| ![Categorias](assets/categorias.png) | ![Metas](assets/metas.png) |
 
 ---
 
@@ -54,15 +58,15 @@ fintrack/
 │   ├── config/       # SecurityConfig, CorsConfig
 │   ├── controller/   # Endpoints REST
 │   ├── domain/
-│   │   ├── entity/   # User, Category, Transaction, Goal
+│   │   ├── entity/   # User, Category, Transaction, Goal, PasswordResetToken
 │   │   └── enums/    # TransactionType (INCOME/EXPENSE)
 │   ├── dto/
 │   │   ├── request/  # Payloads de entrada com validação
 │   │   └── response/ # Payloads de saída
-│   ├── exception/    # GlobalExceptionHandler, ResourceNotFoundException
+│   ├── exception/    # GlobalExceptionHandler, exceções customizadas
 │   ├── repository/   # Interfaces JPA com queries customizadas
 │   ├── security/     # JwtFilter, JwtService, UserDetailsServiceImpl
-│   └── service/      # Regras de negócio
+│   └── service/      # Regras de negócio (inclui EmailService, PasswordResetService)
 │
 └── frontend/         # Interface em Next.js com TypeScript
     └── src/
@@ -82,29 +86,34 @@ fintrack/
 
 ### Back-End
 
-| Tecnologia      | Versão | Uso                           |
-| --------------- | ------ | ----------------------------- |
-| Java            | 21     | Linguagem principal           |
-| Spring Boot     | 3.5.14 | Framework principal           |
-| Spring Security | 6      | Autenticação e autorização    |
-| Spring Data JPA | 3.5.14 | Persistência de dados         |
-| JWT (jjwt)      | 0.12.6 | Geração e validação de tokens |
-| PostgreSQL      | 16.13  | Banco de dados relacional     |
-| Lombok          | latest | Redução de boilerplate        |
-| Maven           | 3.8.7  | Gerenciamento de dependências |
+| Tecnologia      | Versão | Uso                                  |
+| --------------- | ------ | ------------------------------------ |
+| Java            | 21     | Linguagem principal                  |
+| Spring Boot     | 3.5.14 | Framework principal                  |
+| Spring Security | 6      | Autenticação e autorização           |
+| Spring Data JPA | 3.5.14 | Persistência de dados                |
+| JWT (jjwt)      | 0.12.6 | Geração e validação de tokens        |
+| Bucket4j        | 8.10.1 | Rate limiting                        |
+| Resend          | —      | Envio de e-mails (recuperação senha) |
+| PostgreSQL      | 16+    | Banco de dados relacional            |
+| Lombok          | latest | Redução de boilerplate               |
+| Maven           | 3+     | Gerenciamento de dependências        |
 
 ### Front-End
 
 | Tecnologia      | Versão | Uso                            |
 | --------------- | ------ | ------------------------------ |
 | Next.js         | 16.2.6 | Framework React com App Router |
-| TypeScript      | 5.9.3  | Tipagem estática               |
-| Tailwind CSS    | 4.3.0  | Estilização                    |
+| React           | 19.2.4 | Biblioteca de UI               |
+| TypeScript      | 5.x    | Tipagem estática               |
+| Tailwind CSS    | 4.x    | Estilização                    |
 | shadcn/ui       | 4.7.0  | Componentes de UI              |
 | Recharts        | 3.8.1  | Gráficos e visualizações       |
 | React Hook Form | 7.75.0 | Gerenciamento de formulários   |
-| Zod             | 4.4.3  | Validação de schemas           |
+| Zod             | 4.0.0  | Validação de schemas           |
 | Axios           | 1.16.1 | Requisições HTTP               |
+| jsPDF           | 4.2.1  | Exportação de relatórios PDF   |
+| html2canvas     | 1.4.1  | Captura de tela para PDF       |
 
 ### Infra
 
@@ -153,6 +162,12 @@ Goal
 ├── category_id (FK)
 ├── user_id (FK)
 └── timestamps
+
+PasswordResetToken
+├── id (UUID)
+├── user_id (FK)
+├── code
+└── expiresAt
 ```
 
 ---
@@ -161,10 +176,13 @@ Goal
 
 ### Auth
 
-| Método | Rota                 | Descrição                |
-| ------ | -------------------- | ------------------------ |
-| POST   | `/api/auth/register` | Cadastro de usuário      |
-| POST   | `/api/auth/login`    | Login e geração de token |
+| Método | Rota                        | Descrição                       |
+| ------ | --------------------------- | ------------------------------- |
+| POST   | `/api/auth/register`        | Cadastro de usuário             |
+| POST   | `/api/auth/login`           | Login e geração de token        |
+| POST   | `/api/auth/forgot-password` | Solicitar código de recuperação |
+| POST   | `/api/auth/verify-code`     | Verificar código recebido       |
+| POST   | `/api/auth/reset-password`  | Redefinir senha                 |
 
 ### Categories
 
@@ -228,25 +246,42 @@ Crie o banco de dados:
 psql -U postgres -c "CREATE DATABASE fintrack_db;"
 ```
 
-Configure o `src/main/resources/application.properties`:
+Copie o arquivo de exemplo e preencha com seus dados:
+
+```bash
+cp src/main/resources/application.properties.example src/main/resources/application.properties
+```
+
+Edite `src/main/resources/application.properties` com suas credenciais:
 
 ```properties
+# Banco de dados
 spring.datasource.url=jdbc:postgresql://localhost:5432/fintrack_db
-spring.datasource.username=SEU_USUARIO
-spring.datasource.password=SUA_SENHA
-spring.jpa.hibernate.ddl-auto=update
+spring.datasource.username=SEU_USUARIO_POSTGRES
+spring.datasource.password=SUA_SENHA_POSTGRES
 
-jwt.secret=seu-secret-minimo-256-bits
-jwt.expiration=86400000
+# JWT — mínimo 256 bits (32 caracteres aleatórios)
+jwt.secret=sua-chave-secreta-minimo-256-bits-troque-em-producao
+jwt.expiration=3600000
+
+# Resend — crie sua chave gratuita em https://resend.com
+resend.api.key=re_SUA_CHAVE_RESEND
+
+# URL do front-end
+app.frontend.url=http://localhost:3000
 ```
 
 Rode o projeto:
 
 ```bash
+# Com Maven instalado globalmente
 mvn spring-boot:run
+
+# Sem Maven instalado (usa o wrapper incluso)
+./mvnw spring-boot:run
 ```
 
-A API estará disponível em `http://localhost:8080`
+A API estará disponível em `http://localhost:8081`
 
 ### 3. Configure e rode o front-end
 
@@ -254,10 +289,16 @@ A API estará disponível em `http://localhost:8080`
 cd frontend
 ```
 
-Crie o arquivo `.env.local`:
+Copie o arquivo de exemplo e ajuste se necessário:
+
+```bash
+cp .env.example .env
+```
+
+O arquivo `.env` gerado já aponta para a API local:
 
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:8080
+NEXT_PUBLIC_API_URL=http://localhost:8081
 ```
 
 Instale as dependências e rode:
@@ -271,17 +312,21 @@ O front-end estará disponível em `http://localhost:3000`
 
 ---
 
-## Deploy
+## Testes
 
-O sistema está hospedado em VPS própria com:
+![Testes](assets/testes.png)
 
-- **Front-end:** `fintrack.gabrielporto.me`
-- **Back-end:** `api-fintrack.gabrielporto.me`
-- **SSL:** Certbot
-- **Proxy:** Nginx
-- **Processos:** PM2
+Os testes unitários cobrem os serviços principais: `AuthService`, `CategoryService`, `TransactionService`, `GoalService` e `PasswordResetService`.
 
----
+```bash
+cd backend
+
+# Com Maven instalado globalmente
+mvn test
+
+# Sem Maven instalado (usa o wrapper incluso)
+./mvnw test
+```
 
 ## Autor
 
