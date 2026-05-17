@@ -122,7 +122,7 @@ export const Hero = () => {
             </Link>
           </Button>
           <Button variant='outline' size='lg' asChild>
-            <Link href='/auth/sign-in'>Ver demo</Link>
+            <Link href='/auth/sign-in'>Entrar</Link>
           </Button>
         </div>
 
