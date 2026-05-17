@@ -117,42 +117,42 @@ export const ReportChart = ({ monthlyData, categoryData, loading, periodLabel }:
           <div className='py-10 text-center text-sm text-muted-foreground'>Sem despesas no período</div>
         ) : (
           <div className='overflow-x-auto'>
-          <Table>
-            <TableHeader>
-              <TableRow className='border-border hover:bg-transparent'>
-                <TableHead>Categoria</TableHead>
-                <TableHead>Total gasto</TableHead>
-                <TableHead>% do total</TableHead>
-                <TableHead>Barra</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {categoryData.map(row => (
-                <TableRow key={row.name} className='border-border'>
-                  <TableCell>
-                    <div className='flex items-center gap-2.5'>
-                      <div
-                        className='w-7 h-7 rounded-lg flex items-center justify-center text-sm shrink-0'
-                        style={{ background: row.color + '20' }}
-                      >
-                        {row.icon}
-                      </div>
-                      <span className='text-sm font-medium'>{row.name}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <span className='font-mono text-sm font-semibold'>{brl(row.total)}</span>
-                  </TableCell>
-                  <TableCell>
-                    <span className='text-sm text-muted-foreground'>{row.pct}%</span>
-                  </TableCell>
-                  <TableCell className='w-48'>
-                    <Progress value={row.pct} className='h-1.5' indicatorStyle={{ background: row.color }} />
-                  </TableCell>
+            <Table>
+              <TableHeader>
+                <TableRow className='border-border hover:bg-transparent'>
+                  <TableHead>Categoria</TableHead>
+                  <TableHead>Total gasto</TableHead>
+                  <TableHead>% do total</TableHead>
+                  <TableHead>Barra</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {categoryData.map(row => (
+                  <TableRow key={row.name} className='border-border'>
+                    <TableCell>
+                      <div className='flex items-center gap-2.5'>
+                        <div
+                          className='w-7 h-7 rounded-lg flex items-center justify-center text-sm shrink-0'
+                          style={{ background: row.color + '20' }}
+                        >
+                          {row.icon}
+                        </div>
+                        <span className='text-sm font-medium'>{row.name}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <span className='font-mono text-sm font-semibold'>{brl(row.total)}</span>
+                    </TableCell>
+                    <TableCell>
+                      <span className='text-sm text-muted-foreground'>{row.pct}%</span>
+                    </TableCell>
+                    <TableCell className='w-48'>
+                      <Progress value={row.pct} className='h-1.5' indicatorStyle={{ background: row.color }} />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
         )}
       </Card>

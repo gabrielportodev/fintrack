@@ -3,7 +3,7 @@ import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 
 export const metadata = {
-  title: 'Política de Privacidade — Fintrack',
+  title: 'Política de Privacidade — Fintrack'
 }
 
 const PrivacidadePage = () => {
@@ -66,9 +66,8 @@ const PrivacidadePage = () => {
               Não vendemos, alugamos ou compartilhamos seus dados pessoais com terceiros para fins comerciais.
             </p>
             <p>
-              Utilizamos o serviço{' '}
-              <strong>Resend</strong> exclusivamente para o envio de e-mails transacionais (como recuperação de senha).
-              Apenas o endereço de e-mail necessário para o envio é processado por esse serviço.
+              Utilizamos o serviço <strong>Resend</strong> exclusivamente para o envio de e-mails transacionais (como
+              recuperação de senha). Apenas o endereço de e-mail necessário para o envio é processado por esse serviço.
             </p>
           </section>
 

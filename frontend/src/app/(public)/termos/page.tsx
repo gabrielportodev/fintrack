@@ -39,8 +39,8 @@ const TermosPage = () => {
             <h2 className='font-semibold text-[15px] mb-3'>2. Descrição do serviço</h2>
             <p>
               O Fintrack é uma plataforma gratuita de controle de finanças pessoais que permite registrar receitas,
-              despesas, categorias e metas mensais. O serviço é fornecido "como está", sem garantias de disponibilidade
-              contínua ou ausência de erros.
+              despesas, categorias e metas mensais. O serviço é fornecido &ldquo;como está&rdquo;, sem garantias de
+              disponibilidade contínua ou ausência de erros.
             </p>
           </section>
 

@@ -61,7 +61,9 @@ export const TransactionFilters = ({ filter, onFilterChange, month, year, onMont
             variant='ghost'
             onClick={() => onFilterChange(f)}
             className={`px-3 py-1.5 h-auto rounded-md text-sm font-medium capitalize ${
-              filter === f ? 'bg-card text-foreground shadow-sm hover:bg-card' : 'text-muted-foreground hover:text-foreground hover:bg-transparent'
+              filter === f
+                ? 'bg-card text-foreground shadow-sm hover:bg-card'
+                : 'text-muted-foreground hover:text-foreground hover:bg-transparent'
             }`}
           >
             {f === 'todos' ? 'Todos' : f === 'receita' ? 'Receitas' : 'Despesas'}

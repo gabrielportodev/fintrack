@@ -12,7 +12,7 @@ type AuthContextType = {
   user: UserType | null
   isLoading: boolean
   login: (data: LoginSchemaType) => Promise<ApiResponse<TokenType>>
-  register: (data: RegisterSchemaType) => Promise<ApiResponse<RegisterType>>
+  register: (data: Omit<RegisterSchemaType, 'acceptTerms'>) => Promise<ApiResponse<RegisterType>>
   logout: () => void
 }
 
@@ -49,7 +49,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return response
   }
 
-  const register = async (data: RegisterSchemaType) => {
+  const register = async (data: Omit<RegisterSchemaType, 'acceptTerms'>) => {
     return authService.register(data)
   }
 

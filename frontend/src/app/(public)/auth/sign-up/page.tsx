@@ -28,8 +28,7 @@ const SignUpPage = () => {
 
   const onSubmit = async (data: RegisterSchemaType) => {
     try {
-      const { acceptTerms: _, ...signUpData } = data
-      const { message } = await signUp(signUpData)
+      const { message } = await signUp({ name: data.name, email: data.email, password: data.password })
       toast.success(message)
       router.push('/auth/sign-in')
     } catch (err) {
@@ -119,9 +118,7 @@ const SignUpPage = () => {
                 </Link>
               </span>
             </label>
-            {errors.acceptTerms && (
-              <p className='text-[12px] text-destructive'>{errors.acceptTerms.message}</p>
-            )}
+            {errors.acceptTerms && <p className='text-[12px] text-destructive'>{errors.acceptTerms.message}</p>}
           </div>
 
           <Button className='w-full h-10 mt-1' type='submit' disabled={isSubmitting}>

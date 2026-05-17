@@ -15,7 +15,7 @@ const CODE_LENGTH = 6
 
 const VerifyCodePage = () => {
   const router = useRouter()
-  const [email, setEmail] = useState('')
+  const [email] = useState(() => (typeof window !== 'undefined' ? (sessionStorage.getItem('reset_email') ?? '') : ''))
   const [digits, setDigits] = useState<string[]>(Array(CODE_LENGTH).fill(''))
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -23,14 +23,12 @@ const VerifyCodePage = () => {
   const inputRefs = useRef<Array<HTMLInputElement | null>>([])
 
   useEffect(() => {
-    const storedEmail = sessionStorage.getItem('reset_email') ?? ''
-    setEmail(storedEmail)
-    if (!storedEmail) {
+    if (!email) {
       router.replace('/auth/forgot-password')
       return
     }
     inputRefs.current[0]?.focus()
-  }, [router])
+  }, [email, router])
 
   useEffect(() => {
     if (cooldown <= 0) return
