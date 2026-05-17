@@ -34,12 +34,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       stopLoading()
       return
     }
+
+    let cancelled = false
     startLoading()
     authService
       .me()
-      .then(setUser)
+      .then(user => {
+        if (!cancelled) setUser(user)
+      })
       .catch(() => {})
-      .finally(() => stopLoading())
+      .finally(() => {
+        if (!cancelled) stopLoading()
+      })
+
+    return () => {
+      cancelled = true
+    }
   }, [startLoading, stopLoading])
 
   const login = async (data: LoginSchemaType) => {
