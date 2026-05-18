@@ -93,7 +93,7 @@ const SignUpPage = () => {
             <Input
               id='password'
               type='password'
-              placeholder='Mínimo 6 caracteres'
+              placeholder='Mínimo 8 caracteres'
               className='h-10 border-white/15 focus-visible:border-primary'
               {...register('password')}
             />

@@ -1,16 +1,16 @@
 import { z } from 'zod'
 
-export const loginSchema = z.object({
-  email: z.string().email('E-mail inválido'),
-  password: z.string().min(6, 'Senha deve ter no mínimo 6 caracteres')
-})
-
 const strongPassword = z
   .string()
   .min(8, 'Mínimo 8 caracteres')
   .regex(/[A-Z]/, 'Deve ter pelo menos uma letra maiúscula')
   .regex(/[a-z]/, 'Deve ter pelo menos uma letra minúscula')
   .regex(/[0-9]/, 'Deve ter pelo menos um número')
+
+export const loginSchema = z.object({
+  email: z.string().email('E-mail inválido'),
+  password: strongPassword
+})
 
 export const registerSchema = z.object({
   name: z.string().min(2, 'Nome deve ter no mínimo 2 caracteres'),
