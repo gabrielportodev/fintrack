@@ -2,6 +2,7 @@
 
 import { registerSchema, type RegisterSchemaType } from '@/schemas/auth.schema'
 import { LogoIcon } from '@/components/shared/logo-icon'
+import { PasswordInput } from '@/components/ui/password-input'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useAuth } from '@/contexts/auth-context'
 import { Button } from '@/components/ui/button'
@@ -90,9 +91,8 @@ const SignUpPage = () => {
             <Label htmlFor='password' className='text-[13px]'>
               Senha
             </Label>
-            <Input
+            <PasswordInput
               id='password'
-              type='password'
               placeholder='Mínimo 8 caracteres'
               className='h-10 border-white/15 focus-visible:border-primary'
               {...register('password')}

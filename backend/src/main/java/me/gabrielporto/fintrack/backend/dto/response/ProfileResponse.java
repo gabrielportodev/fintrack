@@ -8,11 +8,13 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class MeResponse {
+public class ProfileResponse {
 
     private UUID id;
     private String name;
     private String email;
     private LocalDateTime createdAt;
     private String avatarUrl;
+    private String accessToken;
+    private String refreshToken;
 }

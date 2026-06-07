@@ -2,6 +2,7 @@
 
 import { loginSchema, type LoginSchemaType } from '@/schemas/auth.schema'
 import { LogoIcon } from '@/components/shared/logo-icon'
+import { PasswordInput } from '@/components/ui/password-input'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useAuth } from '@/contexts/auth-context'
 import { Button } from '@/components/ui/button'
@@ -87,9 +88,8 @@ const SignInPage = () => {
                 Esqueceu a senha?
               </Link>
             </div>
-            <Input
+            <PasswordInput
               id='password'
-              type='password'
               placeholder='••••••••'
               className='h-10 border-white/15 focus-visible:border-primary'
               {...register('password')}

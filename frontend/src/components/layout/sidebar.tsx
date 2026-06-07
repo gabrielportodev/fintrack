@@ -12,6 +12,7 @@ import {
   LucideIcon
 } from 'lucide-react'
 import { LogoIcon } from '@/components/shared/logo-icon'
+import { UserAvatar } from '@/components/shared/user-avatar'
 import { useAuth } from '@/contexts/auth-context'
 import { Button } from '@/components/ui/button'
 import { usePathname } from 'next/navigation'
@@ -45,11 +46,6 @@ function SidebarContent({ collapsed, isMobile, onNavigate, onToggleCollapse }: S
   const pathname = usePathname()
   const expanded = !collapsed || isMobile
 
-  const initials = user?.name
-    .split(' ')
-    .map(n => n.charAt(0).toUpperCase())
-    .join('')
-
   return (
     <aside
       className={cn(
@@ -58,29 +54,29 @@ function SidebarContent({ collapsed, isMobile, onNavigate, onToggleCollapse }: S
       )}
       style={{ background: 'var(--sidebar)' }}
     >
-      <div className={cn('flex items-center py-[22px]', expanded ? 'gap-2.5 px-5' : 'justify-center px-3')}>
+      <div className={cn('flex items-center py-5.5', expanded ? 'gap-2.5 px-5' : 'justify-center px-3')}>
         <LogoIcon />
         {expanded && <span className='text-base font-semibold tracking-tight'>Fintrack</span>}
       </div>
 
       <div className={cn('pb-4', expanded ? 'px-4' : 'px-3 flex justify-center')}>
         {expanded ? (
-          <div className='flex items-center gap-2.5 px-2.5 py-2 rounded-lg bg-background border border-border'>
-            <div className='flex items-center justify-center w-[26px] h-[26px] rounded-md bg-[#3B3F66] text-xs font-semibold shrink-0'>
-              {initials}
-            </div>
+          <Link
+            href='/profile'
+            onClick={onNavigate}
+            title='Ver perfil'
+            className='flex items-center gap-2.5 px-2.5 py-2 rounded-lg bg-background border border-border transition-colors hover:border-primary/40'
+          >
+            <UserAvatar name={user?.name} avatarUrl={user?.avatarUrl} className='w-6.5 h-6.5 text-xs' />
             <div className='flex-1 min-w-0'>
               <p className='text-[12.5px] font-medium leading-none truncate'>{user?.name}</p>
               <p className='text-[11px] text-muted-foreground mt-0.5 truncate'>{user?.email}</p>
             </div>
-          </div>
+          </Link>
         ) : (
-          <div
-            className='flex items-center justify-center w-[30px] h-[30px] rounded-md bg-[#3B3F66] text-xs font-semibold'
-            title={user?.name}
-          >
-            {initials}
-          </div>
+          <Link href='/profile' onClick={onNavigate} className='transition-opacity hover:opacity-80' title={user?.name}>
+            <UserAvatar name={user?.name} avatarUrl={user?.avatarUrl} className='w-7.5 h-7.5 text-xs' />
+          </Link>
         )}
       </div>
 

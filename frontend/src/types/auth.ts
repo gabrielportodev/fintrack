@@ -13,6 +13,17 @@ export type UserType = {
   name: string
   email: string
   createdAt: string
+  avatarUrl?: string | null
+}
+
+export type ProfileType = {
+  id: string
+  name: string
+  email: string
+  createdAt: string
+  avatarUrl?: string | null
+  accessToken: string
+  refreshToken: string
 }
 
 export type ForgotPasswordRequest = {

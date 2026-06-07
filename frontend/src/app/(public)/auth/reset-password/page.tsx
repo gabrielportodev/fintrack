@@ -2,10 +2,10 @@
 
 import { resetPasswordSchema, type ResetPasswordSchemaType } from '@/schemas/auth.schema'
 import { LogoIcon } from '@/components/shared/logo-icon'
+import { PasswordInput } from '@/components/ui/password-input'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { authService } from '@/lib/api/auth'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { getErrorMessage } from '@/lib/utils'
 import { useRouter } from 'next/navigation'
@@ -72,9 +72,8 @@ const ResetPasswordPage = () => {
             <Label htmlFor='newPassword' className='text-[13px]'>
               Nova senha
             </Label>
-            <Input
+            <PasswordInput
               id='newPassword'
-              type='password'
               placeholder='Mínimo 8 caracteres'
               className='h-10 border-white/15 focus-visible:border-primary'
               {...register('newPassword')}
@@ -86,9 +85,8 @@ const ResetPasswordPage = () => {
             <Label htmlFor='confirmPassword' className='text-[13px]'>
               Confirmar senha
             </Label>
-            <Input
+            <PasswordInput
               id='confirmPassword'
-              type='password'
               placeholder='Repita a nova senha'
               className='h-10 border-white/15 focus-visible:border-primary'
               {...register('confirmPassword')}

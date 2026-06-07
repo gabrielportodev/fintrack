@@ -24,15 +24,21 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import me.gabrielporto.fintrack.backend.domain.entity.User;
+import me.gabrielporto.fintrack.backend.dto.request.ChangePasswordRequest;
 import me.gabrielporto.fintrack.backend.dto.request.LoginRequest;
 import me.gabrielporto.fintrack.backend.dto.request.RegisterRequest;
+import me.gabrielporto.fintrack.backend.dto.request.UpdateProfileRequest;
 import me.gabrielporto.fintrack.backend.dto.response.MeResponse;
+import me.gabrielporto.fintrack.backend.dto.response.MessageResponse;
+import me.gabrielporto.fintrack.backend.dto.response.ProfileResponse;
 import me.gabrielporto.fintrack.backend.dto.response.RegisterResponse;
 import me.gabrielporto.fintrack.backend.dto.response.TokenResponse;
+import me.gabrielporto.fintrack.backend.exception.BusinessException;
 import me.gabrielporto.fintrack.backend.exception.EmailAlreadyExistsException;
 import me.gabrielporto.fintrack.backend.exception.InvalidCredentialsException;
 import me.gabrielporto.fintrack.backend.exception.ResourceNotFoundException;
 import me.gabrielporto.fintrack.backend.repository.UserRepository;
+import me.gabrielporto.fintrack.backend.security.AuthenticatedUserProvider;
 import me.gabrielporto.fintrack.backend.security.JwtService;
 
 @SuppressWarnings("null")
@@ -53,6 +59,9 @@ class AuthServiceTest {
 
     @Mock
     private UserDetailsService userDetailsService;
+
+    @Mock
+    private AuthenticatedUserProvider authenticatedUserProvider;
 
     @InjectMocks
     private AuthService authService;
@@ -190,5 +199,110 @@ class AuthServiceTest {
         assertThatThrownBy(() -> authService.me())
             .isInstanceOf(ResourceNotFoundException.class)
             .hasMessage("Usuário não encontrado");
+    }
+
+    @Test
+    @DisplayName("Deve atualizar perfil e retornar novos tokens")
+    void shouldUpdateProfileSuccessfully() {
+
+        User user = User.builder()
+            .id(UUID.randomUUID())
+            .name("Gabriel")
+            .email("gabriel@email.com")
+            .password("123")
+            .build();
+
+        UpdateProfileRequest request = new UpdateProfileRequest();
+        request.setName("Gabriel Porto");
+        request.setEmail("novo@email.com");
+
+        when(authenticatedUserProvider.getCurrentUser()).thenReturn(user);
+        when(userRepository.existsByEmail("novo@email.com")).thenReturn(false);
+        when(userRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+        UserDetails userDetails = org.mockito.Mockito.mock(UserDetails.class);
+        when(userDetailsService.loadUserByUsername("novo@email.com")).thenReturn(userDetails);
+        when(jwtService.generateToken(userDetails)).thenReturn("access123");
+        when(jwtService.generateRefreshToken(userDetails)).thenReturn("refresh123");
+
+        ProfileResponse response = authService.updateProfile(request);
+
+        assertThat(response.getName()).isEqualTo("Gabriel Porto");
+        assertThat(response.getEmail()).isEqualTo("novo@email.com");
+        assertThat(response.getAccessToken()).isEqualTo("access123");
+        assertThat(response.getRefreshToken()).isEqualTo("refresh123");
+    }
+
+    @Test
+    @DisplayName("Deve impedir atualização de perfil com email já usado por outro usuário")
+    void shouldThrowWhenUpdatingProfileToExistingEmail() {
+
+        User user = User.builder()
+            .id(UUID.randomUUID())
+            .name("Gabriel")
+            .email("gabriel@email.com")
+            .password("123")
+            .build();
+
+        UpdateProfileRequest request = new UpdateProfileRequest();
+        request.setName("Gabriel");
+        request.setEmail("existente@email.com");
+
+        when(authenticatedUserProvider.getCurrentUser()).thenReturn(user);
+        when(userRepository.existsByEmail("existente@email.com")).thenReturn(true);
+
+        assertThatThrownBy(() -> authService.updateProfile(request))
+            .isInstanceOf(EmailAlreadyExistsException.class);
+    }
+
+    @Test
+    @DisplayName("Deve alterar a senha com sucesso")
+    void shouldChangePasswordSuccessfully() {
+
+        User user = User.builder()
+            .id(UUID.randomUUID())
+            .name("Gabriel")
+            .email("gabriel@email.com")
+            .password("hashAtual")
+            .build();
+
+        ChangePasswordRequest request = new ChangePasswordRequest();
+        request.setCurrentPassword("SenhaAtual1");
+        request.setNewPassword("SenhaNova1");
+        request.setConfirmPassword("SenhaNova1");
+
+        when(authenticatedUserProvider.getCurrentUser()).thenReturn(user);
+        when(passwordEncoder.matches("SenhaAtual1", "hashAtual")).thenReturn(true);
+        when(passwordEncoder.matches("SenhaNova1", "hashAtual")).thenReturn(false);
+        when(passwordEncoder.encode("SenhaNova1")).thenReturn("hashNovo");
+
+        MessageResponse response = authService.changePassword(request);
+
+        assertThat(response.getMessage()).isEqualTo("Senha alterada com sucesso");
+        assertThat(user.getPassword()).isEqualTo("hashNovo");
+    }
+
+    @Test
+    @DisplayName("Deve lançar erro ao alterar senha com senha atual incorreta")
+    void shouldThrowWhenCurrentPasswordIsWrong() {
+
+        User user = User.builder()
+            .id(UUID.randomUUID())
+            .name("Gabriel")
+            .email("gabriel@email.com")
+            .password("hashAtual")
+            .build();
+
+        ChangePasswordRequest request = new ChangePasswordRequest();
+        request.setCurrentPassword("Errada1");
+        request.setNewPassword("SenhaNova1");
+        request.setConfirmPassword("SenhaNova1");
+
+        when(authenticatedUserProvider.getCurrentUser()).thenReturn(user);
+        when(passwordEncoder.matches("Errada1", "hashAtual")).thenReturn(false);
+
+        assertThatThrownBy(() -> authService.changePassword(request))
+            .isInstanceOf(BusinessException.class)
+            .hasMessage("Senha atual incorreta");
     }
 }

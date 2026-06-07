@@ -46,3 +46,26 @@ export const resetPasswordSchema = z
 export type ForgotPasswordSchemaType = z.infer<typeof forgotPasswordSchema>
 export type VerifyCodeSchemaType = z.infer<typeof verifyCodeSchema>
 export type ResetPasswordSchemaType = z.infer<typeof resetPasswordSchema>
+
+export const updateProfileSchema = z.object({
+  name: z.string().min(2, 'Nome deve ter no mínimo 2 caracteres'),
+  email: z.string().email('E-mail inválido')
+})
+
+export const changePasswordSchema = z
+  .object({
+    currentPassword: z.string().min(1, 'Senha atual é obrigatória'),
+    newPassword: strongPassword,
+    confirmPassword: z.string().min(1, 'Confirmação de senha é obrigatória')
+  })
+  .refine(data => data.newPassword === data.confirmPassword, {
+    message: 'As senhas não coincidem',
+    path: ['confirmPassword']
+  })
+  .refine(data => data.newPassword !== data.currentPassword, {
+    message: 'A nova senha deve ser diferente da senha atual',
+    path: ['newPassword']
+  })
+
+export type UpdateProfileSchemaType = z.infer<typeof updateProfileSchema>
+export type ChangePasswordSchemaType = z.infer<typeof changePasswordSchema>

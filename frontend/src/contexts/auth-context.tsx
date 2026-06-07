@@ -13,6 +13,7 @@ type AuthContextType = {
   isLoading: boolean
   login: (data: LoginSchemaType) => Promise<ApiResponse<TokenType>>
   register: (data: Omit<RegisterSchemaType, 'acceptTerms'>) => Promise<ApiResponse<RegisterType>>
+  updateUser: (user: UserType) => void
   logout: () => void
 }
 
@@ -63,13 +64,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return authService.register(data)
   }
 
+  const updateUser = (updated: UserType) => setUser(updated)
+
   const logout = () => {
     setUser(null)
     authService.logout()
   }
 
   return (
-    <AuthContext.Provider value={{ user, isLoading: loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, isLoading: loading, login, register, updateUser, logout }}>
       {children}
     </AuthContext.Provider>
   )

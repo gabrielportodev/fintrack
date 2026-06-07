@@ -1,5 +1,4 @@
 import { LogoIcon } from '@/components/shared/logo-icon'
-import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 
 export const metadata = {
@@ -9,15 +8,7 @@ export const metadata = {
 const TermosPage = () => {
   return (
     <div className='min-h-screen bg-background px-4 py-12 relative'>
-      <Link
-        href='/'
-        className='fixed top-6 left-6 flex items-center gap-1.5 text-[13px] text-muted-foreground hover:text-foreground transition-colors'
-      >
-        <ArrowLeft size={14} />
-        Início
-      </Link>
-
-      <div className='max-w-[680px] mx-auto'>
+      <div className='max-w-170 mx-auto'>
         <div className='flex flex-col items-center gap-3 mb-10'>
           <LogoIcon />
           <span className='font-semibold text-[16px] tracking-tight'>Fintrack</span>
