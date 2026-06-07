@@ -46,7 +46,7 @@ const SignUpPage = () => {
         Início
       </Link>
 
-      <div className='w-full max-w-[360px]'>
+      <div className='w-full max-w-90'>
         <div className='flex flex-col items-center gap-3 mb-8'>
           <LogoIcon />
           <span className='font-semibold text-[16px] tracking-tight'>Fintrack</span>

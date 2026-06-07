@@ -1,31 +1,7 @@
-import { HowItWorks } from '@/components/landing/how-it-works'
-import { Features } from '@/components/landing/features'
-import { Footer } from '@/components/landing/footer'
-import { Navbar } from '@/components/landing/navbar'
-import { Hero } from '@/components/landing/hero'
-import { Faq } from '@/components/landing/faq'
-import { Cta } from '@/components/landing/cta'
+import { redirect } from 'next/navigation'
 
-const LandingPage = () => {
-  return (
-    <div className='min-h-screen bg-background flex flex-col'>
-      <Navbar />
-      <main>
-        <Hero />
-        <section id='recursos'>
-          <Features />
-        </section>
-        <section id='como-funciona'>
-          <HowItWorks />
-        </section>
-        <section id='faq'>
-          <Faq />
-        </section>
-        <Cta />
-      </main>
-      <Footer />
-    </div>
-  )
+const RootPage = () => {
+  redirect('/auth/sign-in')
 }
 
-export default LandingPage
+export default RootPage
