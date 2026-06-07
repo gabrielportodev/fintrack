@@ -5,12 +5,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { transactionService } from '@/lib/api/transactions'
 import type { TransactionType } from '@/types/transaction'
 import { TransactionTypeEnum } from '@/types/transaction'
-import { TrendingUp, TrendingDown } from 'lucide-react'
+import { TrendingUp, TrendingDown, Sparkles } from 'lucide-react'
 import { categoryService } from '@/lib/api/categories'
 import type { CategoryType } from '@/types/category'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { aiService } from '@/lib/api/ai'
 import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 
@@ -29,12 +31,15 @@ export const TransactionDialog = ({ open, onOpenChange, transaction, onSaved }: 
   const [categoryId, setCategoryId] = useState(transaction?.categoryId ?? '')
   const [categories, setCategories] = useState<CategoryType[]>([])
   const [saving, setSaving] = useState(false)
+  const [aiSuggested, setAiSuggested] = useState(false)
+  const [suggesting, setSuggesting] = useState(false)
 
   const stateKey = `${open}-${transaction?.id ?? 'new'}`
   const [prevKey, setPrevKey] = useState(stateKey)
 
   if (prevKey !== stateKey) {
     setPrevKey(stateKey)
+    setAiSuggested(false)
     if (transaction) {
       setTxType(transaction.type)
       setDescription(transaction.description)
@@ -57,6 +62,32 @@ export const TransactionDialog = ({ open, onOpenChange, transaction, onSaved }: 
       .then(res => setCategories(res.data))
       .catch(() => {})
   }, [open])
+
+  const handleSuggestCategory = async () => {
+    const valorValido = !!amount && !isNaN(Number(amount)) && Number(amount) > 0
+    if (transaction || categoryId || !description.trim() || !valorValido) return
+
+    setSuggesting(true)
+    try {
+      const { data } = await aiService.suggestCategory({
+        description: description.trim(),
+        amount: Number(amount),
+        type: txType
+      })
+      if (data?.categoryId) {
+        setCategoryId(data.categoryId)
+        setAiSuggested(true)
+      }
+    } catch {
+    } finally {
+      setSuggesting(false)
+    }
+  }
+
+  const handleCategoryChange = (value: string) => {
+    setCategoryId(value)
+    setAiSuggested(false)
+  }
 
   const handleSave = async () => {
     if (!description.trim()) return toast.error('Informe uma descrição')
@@ -126,6 +157,7 @@ export const TransactionDialog = ({ open, onOpenChange, transaction, onSaved }: 
               placeholder='Ex: Almoço no restaurante'
               value={description}
               onChange={e => setDescription(e.target.value)}
+              onBlur={handleSuggestCategory}
             />
           </div>
 
@@ -137,6 +169,7 @@ export const TransactionDialog = ({ open, onOpenChange, transaction, onSaved }: 
               placeholder='0,00'
               value={amount}
               onChange={e => setAmount(e.target.value)}
+              onBlur={handleSuggestCategory}
             />
           </div>
 
@@ -146,8 +179,16 @@ export const TransactionDialog = ({ open, onOpenChange, transaction, onSaved }: 
               <Input type='date' value={date} onChange={e => setDate(e.target.value)} />
             </div>
             <div className='flex flex-col gap-1.5'>
-              <Label>Categoria</Label>
-              <Select value={categoryId} onValueChange={setCategoryId}>
+              <div className='flex items-center gap-2 min-h-5'>
+                <Label>Categoria</Label>
+                {suggesting && <span className='text-[10px] text-muted-foreground'>sugerindo…</span>}
+                {aiSuggested && !suggesting && (
+                  <Badge variant='secondary' className='gap-1'>
+                    <Sparkles className='size-3' /> Sugerido por IA
+                  </Badge>
+                )}
+              </div>
+              <Select value={categoryId} onValueChange={handleCategoryChange}>
                 <SelectTrigger>
                   <SelectValue placeholder='Selecionar...' />
                 </SelectTrigger>

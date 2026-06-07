@@ -1,20 +1,21 @@
 package me.gabrielporto.fintrack.backend.security;
 
+import java.io.IOException;
+import java.time.Duration;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.http.HttpStatus;
-import org.springframework.lang.NonNull;
-import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
-
-import java.io.IOException;
-import java.time.Duration;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class RateLimitFilter extends OncePerRequestFilter {
@@ -27,43 +28,64 @@ public class RateLimitFilter extends OncePerRequestFilter {
     }
 
     private String getEndpointKey(String uri) {
-        if (uri.contains("/auth/forgot-password")) return "forgot-password";
-        if (uri.contains("/auth/verify-code"))     return "verify-code";
-        if (uri.contains("/auth/login"))            return "login";
-        if (uri.contains("/auth/register"))         return "register";
+        if (uri.contains("/auth/forgot-password")) {
+            return "forgot-password";
+        }
+        if (uri.contains("/auth/verify-code")) {
+            return "verify-code";
+        }
+        if (uri.contains("/auth/login")) {
+            return "login";
+        }
+        if (uri.contains("/auth/register")) {
+            return "register";
+        }
+        if (uri.contains("/api/ai/")) {
+            return "ai";
+        }
         return "global";
     }
 
     private Bucket createBucket(String uri) {
         Bandwidth limit = switch (getEndpointKey(uri)) {
-            case "forgot-password" -> Bandwidth.builder()
-                    .capacity(3)
-                    .refillIntervally(3, Duration.ofHours(1))
-                    .build();
-            case "verify-code" -> Bandwidth.builder()
-                    .capacity(5)
-                    .refillIntervally(5, Duration.ofMinutes(15))
-                    .build();
-            case "login" -> Bandwidth.builder()
-                    .capacity(5)
-                    .refillIntervally(5, Duration.ofMinutes(15))
-                    .build();
-            case "register" -> Bandwidth.builder()
-                    .capacity(3)
-                    .refillIntervally(3, Duration.ofHours(1))
-                    .build();
-            default -> Bandwidth.builder()
-                    .capacity(200)
-                    .refillIntervally(200, Duration.ofMinutes(1))
-                    .build();
+            case "forgot-password" ->
+                Bandwidth.builder()
+                .capacity(3)
+                .refillIntervally(3, Duration.ofHours(1))
+                .build();
+            case "verify-code" ->
+                Bandwidth.builder()
+                .capacity(5)
+                .refillIntervally(5, Duration.ofMinutes(15))
+                .build();
+            case "login" ->
+                Bandwidth.builder()
+                .capacity(5)
+                .refillIntervally(5, Duration.ofMinutes(15))
+                .build();
+            case "register" ->
+                Bandwidth.builder()
+                .capacity(3)
+                .refillIntervally(3, Duration.ofHours(1))
+                .build();
+            case "ai" ->
+                Bandwidth.builder()
+                .capacity(20)
+                .refillIntervally(20, Duration.ofMinutes(1))
+                .build();
+            default ->
+                Bandwidth.builder()
+                .capacity(200)
+                .refillIntervally(200, Duration.ofMinutes(1))
+                .build();
         };
         return Bucket.builder().addLimit(limit).build();
     }
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
-                                    @NonNull HttpServletResponse response,
-                                    @NonNull FilterChain filterChain) throws ServletException, IOException {
+            @NonNull HttpServletResponse response,
+            @NonNull FilterChain filterChain) throws ServletException, IOException {
         String ip = extractIp(request);
         Bucket bucket = resolveBucket(ip, request.getRequestURI());
 

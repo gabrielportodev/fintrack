@@ -38,7 +38,11 @@ const DashboardPage = () => {
         setTransactions(txRes.data)
 
         const currentSummary = summaryRangeRes.data.find(s => s.month === month && s.year === year)
-        setSummary({ income: currentSummary?.income ?? 0, expense: currentSummary?.expense ?? 0, balance: currentSummary?.balance ?? 0 })
+        setSummary({
+          income: currentSummary?.income ?? 0,
+          expense: currentSummary?.expense ?? 0,
+          balance: currentSummary?.balance ?? 0
+        })
 
         setMonthlyStats(
           summaryRangeRes.data.map(s => ({

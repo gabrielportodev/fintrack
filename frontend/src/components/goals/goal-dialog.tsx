@@ -3,11 +3,15 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Sparkles } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { goalService } from '@/lib/api/goals'
 import { categoryService } from '@/lib/api/categories'
+import { aiService } from '@/lib/api/ai'
+import { TransactionTypeEnum } from '@/types/transaction'
 import type { GoalType } from '@/types/goal'
 import type { CategoryType } from '@/types/category'
 import { toast } from 'sonner'
@@ -50,12 +54,15 @@ export const GoalDialog = ({ open, onOpenChange, goal, defaultMonth, defaultYear
   const [categoryId, setCategoryId] = useState(goal?.categoryId ?? '')
   const [categories, setCategories] = useState<CategoryType[]>([])
   const [saving, setSaving] = useState(false)
+  const [aiSuggested, setAiSuggested] = useState(false)
+  const [suggesting, setSuggesting] = useState(false)
 
   const stateKey = `${open}-${goal?.id ?? 'new'}`
   const [prevKey, setPrevKey] = useState(stateKey)
 
   if (prevKey !== stateKey) {
     setPrevKey(stateKey)
+    setAiSuggested(false)
     if (goal) {
       setName(goal.name)
       setLimitAmount(String(goal.limitAmount))
@@ -78,6 +85,32 @@ export const GoalDialog = ({ open, onOpenChange, goal, defaultMonth, defaultYear
       .then(res => setCategories(res.data))
       .catch(() => {})
   }, [open])
+
+  const handleSuggestCategory = async () => {
+    const valorValido = !!limitAmount && !isNaN(Number(limitAmount)) && Number(limitAmount) > 0
+    if (goal || categoryId || !name.trim() || !valorValido) return
+
+    setSuggesting(true)
+    try {
+      const { data } = await aiService.suggestCategory({
+        description: name.trim(),
+        amount: Number(limitAmount),
+        type: TransactionTypeEnum.EXPENSE
+      })
+      if (data?.categoryId) {
+        setCategoryId(data.categoryId)
+        setAiSuggested(true)
+      }
+    } catch {
+    } finally {
+      setSuggesting(false)
+    }
+  }
+
+  const handleCategoryChange = (value: string) => {
+    setCategoryId(value)
+    setAiSuggested(false)
+  }
 
   const handleSave = async () => {
     if (!name.trim() || !limitAmount || !categoryId) {
@@ -118,7 +151,12 @@ export const GoalDialog = ({ open, onOpenChange, goal, defaultMonth, defaultYear
         <div className='flex flex-col gap-4 py-2'>
           <div className='flex flex-col gap-1.5'>
             <Label>Nome</Label>
-            <Input placeholder='Ex: Limite de alimentação' value={name} onChange={e => setName(e.target.value)} />
+            <Input
+              placeholder='Ex: Limite de alimentação'
+              value={name}
+              onChange={e => setName(e.target.value)}
+              onBlur={handleSuggestCategory}
+            />
           </div>
 
           <div className='flex flex-col gap-1.5'>
@@ -128,6 +166,7 @@ export const GoalDialog = ({ open, onOpenChange, goal, defaultMonth, defaultYear
               placeholder='0,00'
               value={limitAmount}
               onChange={e => setLimitAmount(e.target.value)}
+              onBlur={handleSuggestCategory}
             />
           </div>
 
@@ -165,8 +204,16 @@ export const GoalDialog = ({ open, onOpenChange, goal, defaultMonth, defaultYear
           </div>
 
           <div className='flex flex-col gap-1.5'>
-            <Label>Categoria</Label>
-            <Select value={categoryId} onValueChange={setCategoryId}>
+            <div className='flex items-center gap-2 min-h-5'>
+              <Label>Categoria</Label>
+              {suggesting && <span className='text-[10px] text-muted-foreground'>sugerindo…</span>}
+              {aiSuggested && !suggesting && (
+                <Badge variant='secondary' className='gap-1'>
+                  <Sparkles className='size-3' /> Sugerido por IA
+                </Badge>
+              )}
+            </div>
+            <Select value={categoryId} onValueChange={handleCategoryChange}>
               <SelectTrigger>
                 <SelectValue placeholder='Selecionar categoria...' />
               </SelectTrigger>

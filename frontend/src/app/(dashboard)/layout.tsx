@@ -1,5 +1,6 @@
 'use client'
 
+import { AiChatWidget } from '@/components/dashboard/ai-chat-widget'
 import { AuthGuard } from '@/components/layout/auth-guard'
 import { LogoIcon } from '@/components/shared/logo-icon'
 import { Sidebar } from '@/components/layout/sidebar'
@@ -26,6 +27,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
           {children}
         </main>
+        <AiChatWidget />
       </div>
     </AuthGuard>
   )
