@@ -1,15 +1,14 @@
 package me.gabrielporto.fintrack.backend.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
-import me.gabrielporto.fintrack.backend.domain.enums.TransactionType;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import lombok.*;
+import me.gabrielporto.fintrack.backend.domain.enums.TransactionType;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name = "transactions")

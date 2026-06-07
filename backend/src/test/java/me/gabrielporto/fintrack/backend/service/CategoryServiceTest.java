@@ -9,7 +9,14 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
+import me.gabrielporto.fintrack.backend.domain.entity.Category;
+import me.gabrielporto.fintrack.backend.domain.entity.User;
+import me.gabrielporto.fintrack.backend.dto.request.CategoryRequest;
+import me.gabrielporto.fintrack.backend.dto.response.CategoryResponse;
+import me.gabrielporto.fintrack.backend.exception.BusinessException;
+import me.gabrielporto.fintrack.backend.exception.ResourceNotFoundException;
+import me.gabrielporto.fintrack.backend.repository.CategoryRepository;
+import me.gabrielporto.fintrack.backend.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,15 +27,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-
-import me.gabrielporto.fintrack.backend.domain.entity.Category;
-import me.gabrielporto.fintrack.backend.domain.entity.User;
-import me.gabrielporto.fintrack.backend.dto.request.CategoryRequest;
-import me.gabrielporto.fintrack.backend.dto.response.CategoryResponse;
-import me.gabrielporto.fintrack.backend.exception.BusinessException;
-import me.gabrielporto.fintrack.backend.exception.ResourceNotFoundException;
-import me.gabrielporto.fintrack.backend.repository.CategoryRepository;
-import me.gabrielporto.fintrack.backend.repository.UserRepository;
 
 @SuppressWarnings("null")
 @ExtendWith(MockitoExtension.class)
@@ -49,22 +47,19 @@ class CategoryServiceTest {
     void setUp() {
 
         user = User.builder()
-            .id(UUID.randomUUID())
-            .name("Gabriel")
-            .email("gabriel@email.com")
-            .password("123")
-            .build();
+                .id(UUID.randomUUID())
+                .name("Gabriel")
+                .email("gabriel@email.com")
+                .password("123")
+                .build();
 
         Authentication authentication = mock(Authentication.class);
 
-        when(authentication.getName())
-            .thenReturn("gabriel@email.com");
+        when(authentication.getName()).thenReturn("gabriel@email.com");
 
-        SecurityContextHolder.getContext()
-            .setAuthentication(authentication);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        when(userRepository.findByEmail("gabriel@email.com"))
-            .thenReturn(Optional.of(user));
+        when(userRepository.findByEmail("gabriel@email.com")).thenReturn(Optional.of(user));
     }
 
     @AfterEach
@@ -77,21 +72,19 @@ class CategoryServiceTest {
     void shouldReturnUserCategories() {
 
         Category category = Category.builder()
-            .id(UUID.randomUUID())
-            .name("Alimentação")
-            .color("#FF0000")
-            .icon("food")
-            .user(user)
-            .build();
+                .id(UUID.randomUUID())
+                .name("Alimentação")
+                .color("#FF0000")
+                .icon("food")
+                .user(user)
+                .build();
 
-        when(categoryRepository.findAllByUserId(user.getId()))
-            .thenReturn(List.of(category));
+        when(categoryRepository.findAllByUserId(user.getId())).thenReturn(List.of(category));
 
         List<CategoryResponse> response = categoryService.findAll();
 
         assertThat(response).hasSize(1);
-        assertThat(response.get(0).getName())
-            .isEqualTo("Alimentação");
+        assertThat(response.get(0).getName()).isEqualTo("Alimentação");
     }
 
     @Test
@@ -104,18 +97,17 @@ class CategoryServiceTest {
         request.setIcon("food");
 
         Category category = Category.builder()
-            .id(UUID.randomUUID())
-            .name("Alimentação")
-            .color("#FF0000")
-            .icon("food")
-            .user(user)
-            .build();
+                .id(UUID.randomUUID())
+                .name("Alimentação")
+                .color("#FF0000")
+                .icon("food")
+                .user(user)
+                .build();
 
         when(categoryRepository.existsByNameAndUserId("Alimentação", user.getId()))
-            .thenReturn(false);
+                .thenReturn(false);
 
-        when(categoryRepository.save(any()))
-            .thenReturn(category);
+        when(categoryRepository.save(any())).thenReturn(category);
 
         CategoryResponse response = categoryService.create(request);
 
@@ -131,11 +123,11 @@ class CategoryServiceTest {
         request.setName("Alimentação");
 
         when(categoryRepository.existsByNameAndUserId("Alimentação", user.getId()))
-            .thenReturn(true);
+                .thenReturn(true);
 
         assertThatThrownBy(() -> categoryService.create(request))
-            .isInstanceOf(BusinessException.class)
-            .hasMessage("Já existe uma categoria com esse nome");
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("Já existe uma categoria com esse nome");
     }
 
     @Test
@@ -150,18 +142,16 @@ class CategoryServiceTest {
         request.setIcon("car");
 
         Category category = Category.builder()
-            .id(categoryId)
-            .name("Alimentação")
-            .color("#FF0000")
-            .icon("food")
-            .user(user)
-            .build();
+                .id(categoryId)
+                .name("Alimentação")
+                .color("#FF0000")
+                .icon("food")
+                .user(user)
+                .build();
 
-        when(categoryRepository.findByIdAndUserId(categoryId, user.getId()))
-            .thenReturn(Optional.of(category));
+        when(categoryRepository.findByIdAndUserId(categoryId, user.getId())).thenReturn(Optional.of(category));
 
-        when(categoryRepository.save(any()))
-            .thenReturn(category);
+        when(categoryRepository.save(any())).thenReturn(category);
 
         CategoryResponse response = categoryService.update(categoryId, request);
 
@@ -175,11 +165,10 @@ class CategoryServiceTest {
 
         UUID categoryId = UUID.randomUUID();
 
-        when(categoryRepository.findByIdAndUserId(categoryId, user.getId()))
-            .thenReturn(Optional.empty());
+        when(categoryRepository.findByIdAndUserId(categoryId, user.getId())).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> categoryService.delete(categoryId))
-            .isInstanceOf(ResourceNotFoundException.class)
-            .hasMessage("Categoria não encontrada");
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessage("Categoria não encontrada");
     }
 }

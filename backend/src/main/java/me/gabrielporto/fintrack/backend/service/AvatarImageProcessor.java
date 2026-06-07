@@ -8,7 +8,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.Iterator;
-
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -16,11 +15,9 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
-
+import me.gabrielporto.fintrack.backend.exception.BusinessException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
-
-import me.gabrielporto.fintrack.backend.exception.BusinessException;
 
 @Component
 public class AvatarImageProcessor {
@@ -29,12 +26,8 @@ public class AvatarImageProcessor {
     private static final int MAX_DIMENSION = 2048;
     private static final float JPEG_QUALITY = 0.85f;
 
-    private static final byte[] PNG_SIGNATURE = {
-        (byte) 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A
-    };
-    private static final byte[] JPEG_SIGNATURE = {
-        (byte) 0xFF, (byte) 0xD8, (byte) 0xFF
-    };
+    private static final byte[] PNG_SIGNATURE = {(byte) 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A};
+    private static final byte[] JPEG_SIGNATURE = {(byte) 0xFF, (byte) 0xD8, (byte) 0xFF};
 
     static {
         ImageIO.setUseCache(false);
@@ -116,7 +109,8 @@ public class AvatarImageProcessor {
                     throw new BusinessException("Arquivo de imagem inválido ou corrompido");
                 }
                 if (width > MAX_DIMENSION || height > MAX_DIMENSION) {
-                    throw new BusinessException("A imagem deve ter no máximo " + MAX_DIMENSION + "x" + MAX_DIMENSION + " pixels");
+                    throw new BusinessException(
+                            "A imagem deve ter no máximo " + MAX_DIMENSION + "x" + MAX_DIMENSION + " pixels");
                 }
 
                 BufferedImage image = reader.read(0);
@@ -137,8 +131,8 @@ public class AvatarImageProcessor {
         int height = source.getHeight();
 
         boolean png = format == ImageFormat.PNG;
-        BufferedImage clean = new BufferedImage(width, height,
-                png ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB);
+        BufferedImage clean =
+                new BufferedImage(width, height, png ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB);
 
         Graphics2D g = clean.createGraphics();
         try {

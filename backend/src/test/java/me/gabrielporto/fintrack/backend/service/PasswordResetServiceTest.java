@@ -12,15 +12,6 @@ import static org.mockito.Mockito.when;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
-
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
 import me.gabrielporto.fintrack.backend.domain.entity.PasswordResetToken;
 import me.gabrielporto.fintrack.backend.domain.entity.User;
 import me.gabrielporto.fintrack.backend.dto.request.ForgotPasswordRequest;
@@ -31,6 +22,13 @@ import me.gabrielporto.fintrack.backend.dto.response.ResetTokenResponse;
 import me.gabrielporto.fintrack.backend.exception.BusinessException;
 import me.gabrielporto.fintrack.backend.repository.PasswordResetTokenRepository;
 import me.gabrielporto.fintrack.backend.repository.UserRepository;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SuppressWarnings("null")
 @ExtendWith(MockitoExtension.class)
@@ -58,19 +56,15 @@ class PasswordResetServiceTest {
         ForgotPasswordRequest request = new ForgotPasswordRequest();
         request.setEmail("gabriel@email.com");
 
-        when(userRepository.existsByEmail("gabriel@email.com"))
-            .thenReturn(true);
+        when(userRepository.existsByEmail("gabriel@email.com")).thenReturn(true);
 
-        when(tokenRepository.save(any()))
-            .thenAnswer(invocation -> invocation.getArgument(0));
+        when(tokenRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         MessageResponse response = passwordResetService.forgotPassword(request);
 
-        assertThat(response.getMessage())
-            .isEqualTo("Código enviado para o email");
+        assertThat(response.getMessage()).isEqualTo("Código enviado para o email");
 
-        verify(emailService)
-            .sendPasswordResetCode(eq("gabriel@email.com"), anyString());
+        verify(emailService).sendPasswordResetCode(eq("gabriel@email.com"), anyString());
     }
 
     @Test
@@ -80,16 +74,13 @@ class PasswordResetServiceTest {
         ForgotPasswordRequest request = new ForgotPasswordRequest();
         request.setEmail("teste@email.com");
 
-        when(userRepository.existsByEmail("teste@email.com"))
-            .thenReturn(false);
+        when(userRepository.existsByEmail("teste@email.com")).thenReturn(false);
 
         MessageResponse response = passwordResetService.forgotPassword(request);
 
-        assertThat(response.getMessage())
-            .isEqualTo("Código enviado para o email");
+        assertThat(response.getMessage()).isEqualTo("Código enviado para o email");
 
-        verify(emailService, never())
-            .sendPasswordResetCode(anyString(), anyString());
+        verify(emailService, never()).sendPasswordResetCode(anyString(), anyString());
     }
 
     @Test
@@ -101,23 +92,19 @@ class PasswordResetServiceTest {
         request.setCode("123456");
 
         PasswordResetToken token = PasswordResetToken.builder()
-            .email("gabriel@email.com")
-            .code("123456")
-            .expiresAt(LocalDateTime.now().plusMinutes(10))
-            .build();
+                .email("gabriel@email.com")
+                .code("123456")
+                .expiresAt(LocalDateTime.now().plusMinutes(10))
+                .build();
 
-        when(tokenRepository.findByEmailAndCodeAndUsedFalse(
-            "gabriel@email.com",
-            "123456"
-        )).thenReturn(Optional.of(token));
+        when(tokenRepository.findByEmailAndCodeAndUsedFalse("gabriel@email.com", "123456"))
+                .thenReturn(Optional.of(token));
 
-        when(tokenRepository.save(any()))
-            .thenAnswer(invocation -> invocation.getArgument(0));
+        when(tokenRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         ResetTokenResponse response = passwordResetService.verifyCode(request);
 
-        assertThat(response.getResetToken())
-            .isNotBlank();
+        assertThat(response.getResetToken()).isNotBlank();
     }
 
     @Test
@@ -129,19 +116,17 @@ class PasswordResetServiceTest {
         request.setCode("123456");
 
         PasswordResetToken token = PasswordResetToken.builder()
-            .email("gabriel@email.com")
-            .code("123456")
-            .expiresAt(LocalDateTime.now().minusMinutes(1))
-            .build();
+                .email("gabriel@email.com")
+                .code("123456")
+                .expiresAt(LocalDateTime.now().minusMinutes(1))
+                .build();
 
-        when(tokenRepository.findByEmailAndCodeAndUsedFalse(
-            "gabriel@email.com",
-            "123456"
-        )).thenReturn(Optional.of(token));
+        when(tokenRepository.findByEmailAndCodeAndUsedFalse("gabriel@email.com", "123456"))
+                .thenReturn(Optional.of(token));
 
         assertThatThrownBy(() -> passwordResetService.verifyCode(request))
-            .isInstanceOf(BusinessException.class)
-            .hasMessage("Código inválido ou expirado");
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("Código inválido ou expirado");
     }
 
     @Test
@@ -152,14 +137,12 @@ class PasswordResetServiceTest {
         request.setEmail("gabriel@email.com");
         request.setCode("000000");
 
-        when(tokenRepository.findByEmailAndCodeAndUsedFalse(
-            "gabriel@email.com",
-            "000000"
-        )).thenReturn(Optional.empty());
+        when(tokenRepository.findByEmailAndCodeAndUsedFalse("gabriel@email.com", "000000"))
+                .thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> passwordResetService.verifyCode(request))
-            .isInstanceOf(BusinessException.class)
-            .hasMessage("Código inválido ou expirado");
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("Código inválido ou expirado");
     }
 
     @Test
@@ -172,30 +155,26 @@ class PasswordResetServiceTest {
         request.setConfirmPassword("novaSenha123");
 
         User user = User.builder()
-            .id(UUID.randomUUID())
-            .email("gabriel@email.com")
-            .password("senhaAntiga")
-            .build();
+                .id(UUID.randomUUID())
+                .email("gabriel@email.com")
+                .password("senhaAntiga")
+                .build();
 
         PasswordResetToken token = PasswordResetToken.builder()
-            .email("gabriel@email.com")
-            .resetToken("valid-token")
-            .expiresAt(LocalDateTime.now().plusMinutes(10))
-            .build();
+                .email("gabriel@email.com")
+                .resetToken("valid-token")
+                .expiresAt(LocalDateTime.now().plusMinutes(10))
+                .build();
 
-        when(tokenRepository.findByResetTokenAndUsedFalse("valid-token"))
-            .thenReturn(Optional.of(token));
+        when(tokenRepository.findByResetTokenAndUsedFalse("valid-token")).thenReturn(Optional.of(token));
 
-        when(userRepository.findByEmail("gabriel@email.com"))
-            .thenReturn(Optional.of(user));
+        when(userRepository.findByEmail("gabriel@email.com")).thenReturn(Optional.of(user));
 
-        when(passwordEncoder.encode("novaSenha123"))
-            .thenReturn("senhaNovaHash");
+        when(passwordEncoder.encode("novaSenha123")).thenReturn("senhaNovaHash");
 
         MessageResponse response = passwordResetService.resetPassword(request);
 
-        assertThat(response.getMessage())
-            .isEqualTo("Senha redefinida com sucesso");
+        assertThat(response.getMessage()).isEqualTo("Senha redefinida com sucesso");
 
         assertThat(token.isUsed()).isTrue();
 
@@ -212,16 +191,15 @@ class PasswordResetServiceTest {
         request.setConfirmPassword("456");
 
         PasswordResetToken token = PasswordResetToken.builder()
-            .email("gabriel@email.com")
-            .resetToken("valid-token")
-            .expiresAt(LocalDateTime.now().plusMinutes(10))
-            .build();
+                .email("gabriel@email.com")
+                .resetToken("valid-token")
+                .expiresAt(LocalDateTime.now().plusMinutes(10))
+                .build();
 
-        when(tokenRepository.findByResetTokenAndUsedFalse("valid-token"))
-            .thenReturn(Optional.of(token));
+        when(tokenRepository.findByResetTokenAndUsedFalse("valid-token")).thenReturn(Optional.of(token));
 
         assertThatThrownBy(() -> passwordResetService.resetPassword(request))
-            .isInstanceOf(BusinessException.class)
-            .hasMessage("As senhas não coincidem");
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("As senhas não coincidem");
     }
 }

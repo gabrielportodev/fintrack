@@ -4,18 +4,16 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
-
-import org.springframework.ai.tool.annotation.Tool;
-import org.springframework.ai.tool.annotation.ToolParam;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Component;
-
 import lombok.RequiredArgsConstructor;
 import me.gabrielporto.fintrack.backend.ai.dto.TotalCategoria;
 import me.gabrielporto.fintrack.backend.domain.entity.Category;
 import me.gabrielporto.fintrack.backend.repository.CategoryRepository;
 import me.gabrielporto.fintrack.backend.repository.TransactionRepository;
 import me.gabrielporto.fintrack.backend.security.AuthenticatedUserProvider;
+import org.springframework.ai.tool.annotation.Tool;
+import org.springframework.ai.tool.annotation.ToolParam;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
@@ -49,7 +47,9 @@ public class ConsultaFinanceiraTools {
         return receitas.subtract(despesas);
     }
 
-    @Tool(description = "Soma os gastos (despesas) do usuário em uma categoria específica dentro de um intervalo de datas")
+    @Tool(
+            description =
+                    "Soma os gastos (despesas) do usuário em uma categoria específica dentro de um intervalo de datas")
     public BigDecimal totalGastosPorCategoria(
             @ToolParam(description = "nome exato da categoria, ex.: Alimentação") String categoria,
             @ToolParam(description = "data inicial no formato AAAA-MM-DD") LocalDate inicio,
@@ -67,10 +67,11 @@ public class ConsultaFinanceiraTools {
         return transactionRepository.topCategorias(userId, inicio, fim, PageRequest.of(0, Math.max(1, limite)));
     }
 
-    @Tool(description = "Lista os nomes das categorias do usuário. Use para mapear termos do usuário (ex.: 'comida') ao nome real de uma categoria (ex.: 'Alimentação')")
+    @Tool(
+            description =
+                    "Lista os nomes das categorias do usuário. Use para mapear termos do usuário (ex.: 'comida') ao nome real de uma categoria (ex.: 'Alimentação')")
     public List<String> listarCategorias() {
-        return categoryRepository.findAllByUserId(userProvider.getCurrentUserId())
-                .stream()
+        return categoryRepository.findAllByUserId(userProvider.getCurrentUserId()).stream()
                 .map(Category::getName)
                 .toList();
     }

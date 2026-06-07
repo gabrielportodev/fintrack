@@ -1,5 +1,7 @@
 package me.gabrielporto.fintrack.backend.service;
 
+import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import me.gabrielporto.fintrack.backend.domain.entity.Category;
 import me.gabrielporto.fintrack.backend.domain.entity.Goal;
@@ -16,9 +18,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.UUID;
-
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -31,15 +30,15 @@ public class GoalService {
 
     public List<GoalResponse> findByMonth(int month, int year) {
         User user = getAuthenticatedUser();
-        return goalRepository.findAllByUserIdAndMonthAndYear(user.getId(), month, year)
-                .stream()
+        return goalRepository.findAllByUserIdAndMonthAndYear(user.getId(), month, year).stream()
                 .map(goal -> toResponse(goal, user.getId()))
                 .toList();
     }
 
     public GoalResponse create(GoalRequest request) {
         User user = getAuthenticatedUser();
-        Category category = categoryRepository.findByIdAndUserId(request.getCategoryId(), user.getId())
+        Category category = categoryRepository
+                .findByIdAndUserId(request.getCategoryId(), user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada"));
 
         if (goalRepository.existsByCategoryIdAndUserIdAndMonthAndYear(
@@ -61,10 +60,12 @@ public class GoalService {
 
     public GoalResponse update(UUID id, GoalRequest request) {
         User user = getAuthenticatedUser();
-        Goal goal = goalRepository.findByIdAndUserId(id, user.getId())
+        Goal goal = goalRepository
+                .findByIdAndUserId(id, user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Meta não encontrada"));
 
-        Category category = categoryRepository.findByIdAndUserId(request.getCategoryId(), user.getId())
+        Category category = categoryRepository
+                .findByIdAndUserId(request.getCategoryId(), user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada"));
 
         goal.setName(request.getName());
@@ -78,14 +79,16 @@ public class GoalService {
 
     public void delete(UUID id) {
         User user = getAuthenticatedUser();
-        Goal goal = goalRepository.findByIdAndUserId(id, user.getId())
+        Goal goal = goalRepository
+                .findByIdAndUserId(id, user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Meta não encontrada"));
         goalRepository.delete(goal);
     }
 
     private User getAuthenticatedUser() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userRepository.findByEmail(email)
+        return userRepository
+                .findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
     }
 
@@ -104,7 +107,6 @@ public class GoalService {
                 goal.getCategory().getName(),
                 goal.getCategory().getColor(),
                 goal.getCategory().getIcon(),
-                goal.getCreatedAt()
-        );
+                goal.getCreatedAt());
     }
 }

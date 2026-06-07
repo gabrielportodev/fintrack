@@ -9,18 +9,6 @@ import static org.mockito.Mockito.when;
 import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
-
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-
 import me.gabrielporto.fintrack.backend.domain.entity.Category;
 import me.gabrielporto.fintrack.backend.domain.entity.Goal;
 import me.gabrielporto.fintrack.backend.domain.entity.User;
@@ -31,6 +19,16 @@ import me.gabrielporto.fintrack.backend.repository.CategoryRepository;
 import me.gabrielporto.fintrack.backend.repository.GoalRepository;
 import me.gabrielporto.fintrack.backend.repository.TransactionRepository;
 import me.gabrielporto.fintrack.backend.repository.UserRepository;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @SuppressWarnings("null")
 @ExtendWith(MockitoExtension.class)
@@ -58,30 +56,27 @@ class GoalServiceTest {
     void setUp() {
 
         user = User.builder()
-            .id(UUID.randomUUID())
-            .name("Gabriel")
-            .email("gabriel@email.com")
-            .password("123")
-            .build();
+                .id(UUID.randomUUID())
+                .name("Gabriel")
+                .email("gabriel@email.com")
+                .password("123")
+                .build();
 
         category = Category.builder()
-            .id(UUID.randomUUID())
-            .name("Alimentação")
-            .color("#FF0000")
-            .icon("food")
-            .user(user)
-            .build();
+                .id(UUID.randomUUID())
+                .name("Alimentação")
+                .color("#FF0000")
+                .icon("food")
+                .user(user)
+                .build();
 
         Authentication authentication = mock(Authentication.class);
 
-        when(authentication.getName())
-            .thenReturn("gabriel@email.com");
+        when(authentication.getName()).thenReturn("gabriel@email.com");
 
-        SecurityContextHolder.getContext()
-            .setAuthentication(authentication);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        when(userRepository.findByEmail("gabriel@email.com"))
-            .thenReturn(Optional.of(user));
+        when(userRepository.findByEmail("gabriel@email.com")).thenReturn(Optional.of(user));
     }
 
     @AfterEach
@@ -101,43 +96,32 @@ class GoalServiceTest {
         request.setYear(2026);
 
         Goal goal = Goal.builder()
-            .id(UUID.randomUUID())
-            .name("Meta alimentação")
-            .limitAmount(new BigDecimal("500.00"))
-            .month(5)
-            .year(2026)
-            .category(category)
-            .user(user)
-            .build();
+                .id(UUID.randomUUID())
+                .name("Meta alimentação")
+                .limitAmount(new BigDecimal("500.00"))
+                .month(5)
+                .year(2026)
+                .category(category)
+                .user(user)
+                .build();
 
         when(categoryRepository.findByIdAndUserId(category.getId(), user.getId()))
-            .thenReturn(Optional.of(category));
+                .thenReturn(Optional.of(category));
 
-        when(goalRepository.existsByCategoryIdAndUserIdAndMonthAndYear(
-            category.getId(),
-            user.getId(),
-            5,
-            2026
-        )).thenReturn(false);
+        when(goalRepository.existsByCategoryIdAndUserIdAndMonthAndYear(category.getId(), user.getId(), 5, 2026))
+                .thenReturn(false);
 
-        when(goalRepository.save(any()))
-            .thenReturn(goal);
+        when(goalRepository.save(any())).thenReturn(goal);
 
-        when(transactionRepository.sumExpensesByCategoryAndMonthAndYear(
-            user.getId(),
-            category.getId(),
-            5,
-            2026
-        )).thenReturn(new BigDecimal("150.00"));
+        when(transactionRepository.sumExpensesByCategoryAndMonthAndYear(user.getId(), category.getId(), 5, 2026))
+                .thenReturn(new BigDecimal("150.00"));
 
         GoalResponse response = goalService.create(request);
 
         assertThat(response.getName()).isEqualTo("Meta alimentação");
-        assertThat(response.getLimitAmount())
-            .isEqualByComparingTo("500.00");
+        assertThat(response.getLimitAmount()).isEqualByComparingTo("500.00");
 
-        assertThat(response.getSpentAmount())
-            .isEqualByComparingTo("150.00");
+        assertThat(response.getSpentAmount()).isEqualByComparingTo("150.00");
     }
 
     @Test
@@ -150,18 +134,14 @@ class GoalServiceTest {
         request.setYear(2026);
 
         when(categoryRepository.findByIdAndUserId(category.getId(), user.getId()))
-            .thenReturn(Optional.of(category));
+                .thenReturn(Optional.of(category));
 
-        when(goalRepository.existsByCategoryIdAndUserIdAndMonthAndYear(
-            category.getId(),
-            user.getId(),
-            5,
-            2026
-        )).thenReturn(true);
+        when(goalRepository.existsByCategoryIdAndUserIdAndMonthAndYear(category.getId(), user.getId(), 5, 2026))
+                .thenReturn(true);
 
         assertThatThrownBy(() -> goalService.create(request))
-            .isInstanceOf(BusinessException.class)
-            .hasMessage("Já existe uma meta para essa categoria nesse mês");
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("Já existe uma meta para essa categoria nesse mês");
     }
 
     @Test
@@ -176,38 +156,28 @@ class GoalServiceTest {
         request.setYear(2026);
 
         Goal goal = Goal.builder()
-            .id(UUID.randomUUID())
-            .name("Meta alimentação")
-            .limitAmount(new BigDecimal("500.00"))
-            .month(5)
-            .year(2026)
-            .category(category)
-            .user(user)
-            .build();
+                .id(UUID.randomUUID())
+                .name("Meta alimentação")
+                .limitAmount(new BigDecimal("500.00"))
+                .month(5)
+                .year(2026)
+                .category(category)
+                .user(user)
+                .build();
 
         when(categoryRepository.findByIdAndUserId(category.getId(), user.getId()))
-            .thenReturn(Optional.of(category));
+                .thenReturn(Optional.of(category));
 
-        when(goalRepository.existsByCategoryIdAndUserIdAndMonthAndYear(
-            category.getId(),
-            user.getId(),
-            5,
-            2026
-        )).thenReturn(false);
+        when(goalRepository.existsByCategoryIdAndUserIdAndMonthAndYear(category.getId(), user.getId(), 5, 2026))
+                .thenReturn(false);
 
-        when(goalRepository.save(any()))
-            .thenReturn(goal);
+        when(goalRepository.save(any())).thenReturn(goal);
 
-        when(transactionRepository.sumExpensesByCategoryAndMonthAndYear(
-            user.getId(),
-            category.getId(),
-            5,
-            2026
-        )).thenReturn(new BigDecimal("320.50"));
+        when(transactionRepository.sumExpensesByCategoryAndMonthAndYear(user.getId(), category.getId(), 5, 2026))
+                .thenReturn(new BigDecimal("320.50"));
 
         GoalResponse response = goalService.create(request);
 
-        assertThat(response.getSpentAmount())
-            .isEqualByComparingTo("320.50");
+        assertThat(response.getSpentAmount()).isEqualByComparingTo("320.50");
     }
 }

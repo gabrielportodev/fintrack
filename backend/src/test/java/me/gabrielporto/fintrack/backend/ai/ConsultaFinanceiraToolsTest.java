@@ -1,23 +1,22 @@
 package me.gabrielporto.fintrack.backend.ai;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import static org.mockito.ArgumentMatchers.eq;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import org.mockito.junit.jupiter.MockitoExtension;
-
 import me.gabrielporto.fintrack.backend.repository.CategoryRepository;
 import me.gabrielporto.fintrack.backend.repository.TransactionRepository;
 import me.gabrielporto.fintrack.backend.security.AuthenticatedUserProvider;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class ConsultaFinanceiraToolsTest {
@@ -48,7 +47,8 @@ class ConsultaFinanceiraToolsTest {
         BigDecimal total = tools.totalGastosPorCategoria("Alimentação", inicio, fim);
 
         assertThat(total).isEqualByComparingTo("250.00");
-        verify(transactionRepository).sumExpensesByCategoryNameAndPeriod(eq(userId), eq("Alimentação"), eq(inicio), eq(fim));
+        verify(transactionRepository)
+                .sumExpensesByCategoryNameAndPeriod(eq(userId), eq("Alimentação"), eq(inicio), eq(fim));
     }
 
     @Test

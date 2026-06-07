@@ -1,6 +1,8 @@
 package me.gabrielporto.fintrack.backend.controller;
 
 import jakarta.validation.Valid;
+import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import me.gabrielporto.fintrack.backend.dto.request.CategoryRequest;
 import me.gabrielporto.fintrack.backend.dto.response.ApiResponse;
@@ -9,9 +11,6 @@ import me.gabrielporto.fintrack.backend.service.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/categories")
@@ -37,8 +36,10 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<CategoryResponse>> update(@PathVariable UUID id, @Valid @RequestBody CategoryRequest request) {
-        return ResponseEntity.ok(ApiResponse.success(categoryService.update(id, request), "Categoria atualizada com sucesso"));
+    public ResponseEntity<ApiResponse<CategoryResponse>> update(
+            @PathVariable UUID id, @Valid @RequestBody CategoryRequest request) {
+        return ResponseEntity.ok(
+                ApiResponse.success(categoryService.update(id, request), "Categoria atualizada com sucesso"));
     }
 
     @DeleteMapping("/{id}")

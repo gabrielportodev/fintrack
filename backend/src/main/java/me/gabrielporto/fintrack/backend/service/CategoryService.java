@@ -1,5 +1,7 @@
 package me.gabrielporto.fintrack.backend.service;
 
+import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import me.gabrielporto.fintrack.backend.domain.entity.Category;
 import me.gabrielporto.fintrack.backend.domain.entity.User;
@@ -13,9 +15,6 @@ import me.gabrielporto.fintrack.backend.repository.UserRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.UUID;
-
 @Service
 @RequiredArgsConstructor
 public class CategoryService {
@@ -26,15 +25,15 @@ public class CategoryService {
 
     public List<CategoryResponse> findAll() {
         User user = getAuthenticatedUser();
-        return categoryRepository.findAllByUserId(user.getId())
-                .stream()
+        return categoryRepository.findAllByUserId(user.getId()).stream()
                 .map(this::toResponse)
                 .toList();
     }
 
     public CategoryResponse findById(UUID id) {
         User user = getAuthenticatedUser();
-        Category category = categoryRepository.findByIdAndUserId(id, user.getId())
+        Category category = categoryRepository
+                .findByIdAndUserId(id, user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada"));
         return toResponse(category);
     }
@@ -58,7 +57,8 @@ public class CategoryService {
 
     public CategoryResponse update(UUID id, CategoryRequest request) {
         User user = getAuthenticatedUser();
-        Category category = categoryRepository.findByIdAndUserId(id, user.getId())
+        Category category = categoryRepository
+                .findByIdAndUserId(id, user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada"));
 
         category.setName(request.getName());
@@ -70,12 +70,12 @@ public class CategoryService {
 
     public void delete(UUID id) {
         User user = getAuthenticatedUser();
-        Category category = categoryRepository.findByIdAndUserId(id, user.getId())
+        Category category = categoryRepository
+                .findByIdAndUserId(id, user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada"));
 
         if (transactionRepository.existsByCategoryId(id)) {
-            throw new BusinessException(
-                    "Não é possível excluir categoria com transações vinculadas");
+            throw new BusinessException("Não é possível excluir categoria com transações vinculadas");
         }
 
         categoryRepository.delete(category);
@@ -83,17 +83,13 @@ public class CategoryService {
 
     private User getAuthenticatedUser() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userRepository.findByEmail(email)
+        return userRepository
+                .findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
     }
 
     private CategoryResponse toResponse(Category category) {
         return new CategoryResponse(
-                category.getId(),
-                category.getName(),
-                category.getColor(),
-                category.getIcon(),
-                category.getCreatedAt()
-        );
+                category.getId(), category.getName(), category.getColor(), category.getIcon(), category.getCreatedAt());
     }
 }

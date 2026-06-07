@@ -20,17 +20,22 @@ public class PasswordResetController {
     private final PasswordResetService passwordResetService;
 
     @PostMapping("/forgot-password")
-    public ResponseEntity<ApiResponse<MessageResponse>> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
-        return ResponseEntity.ok(ApiResponse.success(passwordResetService.forgotPassword(request), "Solicitação processada"));
+    public ResponseEntity<ApiResponse<MessageResponse>> forgotPassword(
+            @Valid @RequestBody ForgotPasswordRequest request) {
+        return ResponseEntity.ok(
+                ApiResponse.success(passwordResetService.forgotPassword(request), "Solicitação processada"));
     }
 
     @PostMapping("/verify-code")
     public ResponseEntity<ApiResponse<ResetTokenResponse>> verifyCode(@Valid @RequestBody VerifyCodeRequest request) {
-        return ResponseEntity.ok(ApiResponse.success(passwordResetService.verifyCode(request), "Código verificado com sucesso"));
+        return ResponseEntity.ok(
+                ApiResponse.success(passwordResetService.verifyCode(request), "Código verificado com sucesso"));
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<ApiResponse<MessageResponse>> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
-        return ResponseEntity.ok(ApiResponse.success(passwordResetService.resetPassword(request), "Senha redefinida com sucesso"));
+    public ResponseEntity<ApiResponse<MessageResponse>> resetPassword(
+            @Valid @RequestBody ResetPasswordRequest request) {
+        return ResponseEntity.ok(
+                ApiResponse.success(passwordResetService.resetPassword(request), "Senha redefinida com sucesso"));
     }
 }

@@ -1,5 +1,8 @@
 package me.gabrielporto.fintrack.backend.service;
 
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import me.gabrielporto.fintrack.backend.domain.entity.PasswordResetToken;
 import me.gabrielporto.fintrack.backend.domain.entity.User;
@@ -15,10 +18,6 @@ import me.gabrielporto.fintrack.backend.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.security.SecureRandom;
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -54,7 +53,11 @@ public class PasswordResetService {
 
     @Transactional
     public ResetTokenResponse verifyCode(VerifyCodeRequest request) {
-        try { Thread.sleep(500); } catch (InterruptedException ignored) { Thread.currentThread().interrupt(); }
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException ignored) {
+            Thread.currentThread().interrupt();
+        }
 
         PasswordResetToken token = tokenRepository
                 .findByEmailAndCodeAndUsedFalse(request.getEmail(), request.getCode())
@@ -85,7 +88,8 @@ public class PasswordResetService {
             throw new BusinessException("As senhas não coincidem");
         }
 
-        User user = userRepository.findByEmail(token.getEmail())
+        User user = userRepository
+                .findByEmail(token.getEmail())
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));

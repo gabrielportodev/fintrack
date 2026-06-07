@@ -7,22 +7,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 import java.util.UUID;
-
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
 import me.gabrielporto.fintrack.backend.domain.entity.User;
 import me.gabrielporto.fintrack.backend.dto.request.ChangePasswordRequest;
 import me.gabrielporto.fintrack.backend.dto.request.LoginRequest;
@@ -40,6 +24,20 @@ import me.gabrielporto.fintrack.backend.exception.ResourceNotFoundException;
 import me.gabrielporto.fintrack.backend.repository.UserRepository;
 import me.gabrielporto.fintrack.backend.security.AuthenticatedUserProvider;
 import me.gabrielporto.fintrack.backend.security.JwtService;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SuppressWarnings("null")
 @ExtendWith(MockitoExtension.class)
@@ -78,12 +76,11 @@ class AuthServiceTest {
         RegisterRequest request = new RegisterRequest();
         request.setEmail("gabriel@email.com");
 
-        when(userRepository.existsByEmail("gabriel@email.com"))
-            .thenReturn(true);
+        when(userRepository.existsByEmail("gabriel@email.com")).thenReturn(true);
 
         assertThatThrownBy(() -> authService.register(request))
-            .isInstanceOf(EmailAlreadyExistsException.class)
-            .hasMessage("Email já cadastrado!");
+                .isInstanceOf(EmailAlreadyExistsException.class)
+                .hasMessage("Email já cadastrado!");
     }
 
     @Test
@@ -96,19 +93,16 @@ class AuthServiceTest {
         request.setPassword("123456");
 
         User user = User.builder()
-            .name("Gabriel")
-            .email("gabriel@email.com")
-            .password("senhaCriptografada")
-            .build();
+                .name("Gabriel")
+                .email("gabriel@email.com")
+                .password("senhaCriptografada")
+                .build();
 
-        when(userRepository.existsByEmail(any()))
-            .thenReturn(false);
+        when(userRepository.existsByEmail(any())).thenReturn(false);
 
-        when(passwordEncoder.encode("123456"))
-            .thenReturn("senhaCriptografada");
+        when(passwordEncoder.encode("123456")).thenReturn("senhaCriptografada");
 
-        when(userRepository.save(any()))
-            .thenReturn(user);
+        when(userRepository.save(any())).thenReturn(user);
 
         RegisterResponse response = authService.register(request);
 
@@ -126,11 +120,9 @@ class AuthServiceTest {
 
         UserDetails userDetails = org.mockito.Mockito.mock(UserDetails.class);
 
-        when(userDetailsService.loadUserByUsername("gabriel@email.com"))
-            .thenReturn(userDetails);
+        when(userDetailsService.loadUserByUsername("gabriel@email.com")).thenReturn(userDetails);
 
-        when(jwtService.generateToken(userDetails))
-            .thenReturn("token123");
+        when(jwtService.generateToken(userDetails)).thenReturn("token123");
 
         TokenResponse response = authService.login(request);
 
@@ -145,12 +137,11 @@ class AuthServiceTest {
         request.setEmail("gabriel@email.com");
         request.setPassword("senhaErrada");
 
-        when(authenticationManager.authenticate(any()))
-            .thenThrow(new BadCredentialsException("Erro"));
+        when(authenticationManager.authenticate(any())).thenThrow(new BadCredentialsException("Erro"));
 
         assertThatThrownBy(() -> authService.login(request))
-            .isInstanceOf(InvalidCredentialsException.class)
-            .hasMessage("Email ou senha inválidos");
+                .isInstanceOf(InvalidCredentialsException.class)
+                .hasMessage("Email ou senha inválidos");
     }
 
     @Test
@@ -159,21 +150,18 @@ class AuthServiceTest {
 
         Authentication authentication = org.mockito.Mockito.mock(Authentication.class);
 
-        when(authentication.getName())
-            .thenReturn("gabriel@email.com");
+        when(authentication.getName()).thenReturn("gabriel@email.com");
 
-        SecurityContextHolder.getContext()
-            .setAuthentication(authentication);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         User user = User.builder()
-            .id(UUID.randomUUID())
-            .name("Gabriel")
-            .email("gabriel@email.com")
-            .password("123")
-            .build();
+                .id(UUID.randomUUID())
+                .name("Gabriel")
+                .email("gabriel@email.com")
+                .password("123")
+                .build();
 
-        when(userRepository.findByEmail("gabriel@email.com"))
-            .thenReturn(Optional.of(user));
+        when(userRepository.findByEmail("gabriel@email.com")).thenReturn(Optional.of(user));
 
         MeResponse response = authService.me();
 
@@ -187,18 +175,15 @@ class AuthServiceTest {
 
         Authentication authentication = org.mockito.Mockito.mock(Authentication.class);
 
-        when(authentication.getName())
-            .thenReturn("gabriel@email.com");
+        when(authentication.getName()).thenReturn("gabriel@email.com");
 
-        SecurityContextHolder.getContext()
-            .setAuthentication(authentication);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        when(userRepository.findByEmail("gabriel@email.com"))
-            .thenReturn(Optional.empty());
+        when(userRepository.findByEmail("gabriel@email.com")).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> authService.me())
-            .isInstanceOf(ResourceNotFoundException.class)
-            .hasMessage("Usuário não encontrado");
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessage("Usuário não encontrado");
     }
 
     @Test
@@ -206,11 +191,11 @@ class AuthServiceTest {
     void shouldUpdateProfileSuccessfully() {
 
         User user = User.builder()
-            .id(UUID.randomUUID())
-            .name("Gabriel")
-            .email("gabriel@email.com")
-            .password("123")
-            .build();
+                .id(UUID.randomUUID())
+                .name("Gabriel")
+                .email("gabriel@email.com")
+                .password("123")
+                .build();
 
         UpdateProfileRequest request = new UpdateProfileRequest();
         request.setName("Gabriel Porto");
@@ -238,11 +223,11 @@ class AuthServiceTest {
     void shouldThrowWhenUpdatingProfileToExistingEmail() {
 
         User user = User.builder()
-            .id(UUID.randomUUID())
-            .name("Gabriel")
-            .email("gabriel@email.com")
-            .password("123")
-            .build();
+                .id(UUID.randomUUID())
+                .name("Gabriel")
+                .email("gabriel@email.com")
+                .password("123")
+                .build();
 
         UpdateProfileRequest request = new UpdateProfileRequest();
         request.setName("Gabriel");
@@ -251,8 +236,7 @@ class AuthServiceTest {
         when(authenticatedUserProvider.getCurrentUser()).thenReturn(user);
         when(userRepository.existsByEmail("existente@email.com")).thenReturn(true);
 
-        assertThatThrownBy(() -> authService.updateProfile(request))
-            .isInstanceOf(EmailAlreadyExistsException.class);
+        assertThatThrownBy(() -> authService.updateProfile(request)).isInstanceOf(EmailAlreadyExistsException.class);
     }
 
     @Test
@@ -260,11 +244,11 @@ class AuthServiceTest {
     void shouldChangePasswordSuccessfully() {
 
         User user = User.builder()
-            .id(UUID.randomUUID())
-            .name("Gabriel")
-            .email("gabriel@email.com")
-            .password("hashAtual")
-            .build();
+                .id(UUID.randomUUID())
+                .name("Gabriel")
+                .email("gabriel@email.com")
+                .password("hashAtual")
+                .build();
 
         ChangePasswordRequest request = new ChangePasswordRequest();
         request.setCurrentPassword("SenhaAtual1");
@@ -287,11 +271,11 @@ class AuthServiceTest {
     void shouldThrowWhenCurrentPasswordIsWrong() {
 
         User user = User.builder()
-            .id(UUID.randomUUID())
-            .name("Gabriel")
-            .email("gabriel@email.com")
-            .password("hashAtual")
-            .build();
+                .id(UUID.randomUUID())
+                .name("Gabriel")
+                .email("gabriel@email.com")
+                .password("hashAtual")
+                .build();
 
         ChangePasswordRequest request = new ChangePasswordRequest();
         request.setCurrentPassword("Errada1");
@@ -302,7 +286,7 @@ class AuthServiceTest {
         when(passwordEncoder.matches("Errada1", "hashAtual")).thenReturn(false);
 
         assertThatThrownBy(() -> authService.changePassword(request))
-            .isInstanceOf(BusinessException.class)
-            .hasMessage("Senha atual incorreta");
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("Senha atual incorreta");
     }
 }

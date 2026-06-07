@@ -1,17 +1,5 @@
 package me.gabrielporto.fintrack.backend.controller;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import me.gabrielporto.fintrack.backend.dto.request.ChangePasswordRequest;
@@ -26,6 +14,17 @@ import me.gabrielporto.fintrack.backend.dto.response.ProfileResponse;
 import me.gabrielporto.fintrack.backend.dto.response.RegisterResponse;
 import me.gabrielporto.fintrack.backend.dto.response.TokenResponse;
 import me.gabrielporto.fintrack.backend.service.AuthService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -47,7 +46,8 @@ public class AuthController {
 
     @PostMapping("/refresh")
     public ResponseEntity<ApiResponse<TokenResponse>> refresh(@Valid @RequestBody RefreshRequest request) {
-        return ResponseEntity.ok(ApiResponse.success(authService.refresh(request.getRefreshToken()), "Token renovado com sucesso"));
+        return ResponseEntity.ok(
+                ApiResponse.success(authService.refresh(request.getRefreshToken()), "Token renovado com sucesso"));
     }
 
     @GetMapping("/me")
@@ -56,13 +56,17 @@ public class AuthController {
     }
 
     @PutMapping("/me")
-    public ResponseEntity<ApiResponse<ProfileResponse>> updateProfile(@Valid @RequestBody UpdateProfileRequest request) {
-        return ResponseEntity.ok(ApiResponse.success(authService.updateProfile(request), "Perfil atualizado com sucesso"));
+    public ResponseEntity<ApiResponse<ProfileResponse>> updateProfile(
+            @Valid @RequestBody UpdateProfileRequest request) {
+        return ResponseEntity.ok(
+                ApiResponse.success(authService.updateProfile(request), "Perfil atualizado com sucesso"));
     }
 
     @PutMapping("/password")
-    public ResponseEntity<ApiResponse<MessageResponse>> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
-        return ResponseEntity.ok(ApiResponse.success(authService.changePassword(request), "Senha alterada com sucesso"));
+    public ResponseEntity<ApiResponse<MessageResponse>> changePassword(
+            @Valid @RequestBody ChangePasswordRequest request) {
+        return ResponseEntity.ok(
+                ApiResponse.success(authService.changePassword(request), "Senha alterada com sucesso"));
     }
 
     @PutMapping("/me/avatar")
@@ -74,5 +78,4 @@ public class AuthController {
     public ResponseEntity<ApiResponse<MeResponse>> removeAvatar() {
         return ResponseEntity.ok(ApiResponse.success(authService.removeAvatar(), "Avatar removido com sucesso"));
     }
-
 }

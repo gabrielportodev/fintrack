@@ -1,5 +1,11 @@
 package me.gabrielporto.fintrack.backend.service;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import me.gabrielporto.fintrack.backend.domain.entity.Category;
 import me.gabrielporto.fintrack.backend.domain.entity.Transaction;
@@ -16,13 +22,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -34,30 +33,30 @@ public class TransactionService {
 
     public List<TransactionResponse> findAll() {
         User user = getAuthenticatedUser();
-        return transactionRepository.findAllByUserIdOrderByDateDesc(user.getId())
-                .stream()
+        return transactionRepository.findAllByUserIdOrderByDateDesc(user.getId()).stream()
                 .map(this::toResponse)
                 .toList();
     }
 
     public List<TransactionResponse> findByMonth(int month, int year) {
         User user = getAuthenticatedUser();
-        return transactionRepository.findAllByUserIdAndMonthAndYear(user.getId(), month, year)
-                .stream()
+        return transactionRepository.findAllByUserIdAndMonthAndYear(user.getId(), month, year).stream()
                 .map(this::toResponse)
                 .toList();
     }
 
     public TransactionResponse findById(UUID id) {
         User user = getAuthenticatedUser();
-        Transaction transaction = transactionRepository.findByIdAndUserId(id, user.getId())
+        Transaction transaction = transactionRepository
+                .findByIdAndUserId(id, user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Transação não encontrada"));
         return toResponse(transaction);
     }
 
     public TransactionResponse create(TransactionRequest request) {
         User user = getAuthenticatedUser();
-        Category category = categoryRepository.findByIdAndUserId(request.getCategoryId(), user.getId())
+        Category category = categoryRepository
+                .findByIdAndUserId(request.getCategoryId(), user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada"));
 
         Transaction transaction = Transaction.builder()
@@ -74,10 +73,12 @@ public class TransactionService {
 
     public TransactionResponse update(UUID id, TransactionRequest request) {
         User user = getAuthenticatedUser();
-        Transaction transaction = transactionRepository.findByIdAndUserId(id, user.getId())
+        Transaction transaction = transactionRepository
+                .findByIdAndUserId(id, user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Transação não encontrada"));
 
-        Category category = categoryRepository.findByIdAndUserId(request.getCategoryId(), user.getId())
+        Category category = categoryRepository
+                .findByIdAndUserId(request.getCategoryId(), user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada"));
 
         transaction.setDescription(request.getDescription());
@@ -91,7 +92,8 @@ public class TransactionService {
 
     public void delete(UUID id) {
         User user = getAuthenticatedUser();
-        Transaction transaction = transactionRepository.findByIdAndUserId(id, user.getId())
+        Transaction transaction = transactionRepository
+                .findByIdAndUserId(id, user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Transação não encontrada"));
         transactionRepository.delete(transaction);
     }
@@ -108,7 +110,8 @@ public class TransactionService {
 
     public List<TransactionResponse> findByRange(int startMonth, int startYear, int endMonth, int endYear) {
         User user = getAuthenticatedUser();
-        return transactionRepository.findAllByUserIdInRange(user.getId(), startMonth, startYear, endMonth, endYear)
+        return transactionRepository
+                .findAllByUserIdInRange(user.getId(), startMonth, startYear, endMonth, endYear)
                 .stream()
                 .map(this::toResponse)
                 .toList();
@@ -116,7 +119,8 @@ public class TransactionService {
 
     public List<MonthlySummaryResponse> getSummaryRange(int startMonth, int startYear, int endMonth, int endYear) {
         User user = getAuthenticatedUser();
-        List<Object[]> rows = transactionRepository.findMonthlySummaryInRange(user.getId(), startMonth, startYear, endMonth, endYear);
+        List<Object[]> rows =
+                transactionRepository.findMonthlySummaryInRange(user.getId(), startMonth, startYear, endMonth, endYear);
 
         Map<String, MonthlySummaryResponse> byKey = new HashMap<>();
         for (Object[] row : rows) {
@@ -124,31 +128,40 @@ public class TransactionService {
             int year = ((Number) row[1]).intValue();
             BigDecimal income = (BigDecimal) row[2];
             BigDecimal expense = (BigDecimal) row[3];
-            byKey.put(year + "-" + month, new MonthlySummaryResponse(month, year, income, expense, income.subtract(expense)));
+            byKey.put(
+                    year + "-" + month,
+                    new MonthlySummaryResponse(month, year, income, expense, income.subtract(expense)));
         }
 
         List<MonthlySummaryResponse> result = new ArrayList<>();
         int m = startMonth, y = startYear;
         while (y < endYear || (y == endYear && m <= endMonth)) {
-            result.add(byKey.getOrDefault(y + "-" + m, new MonthlySummaryResponse(m, y, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO)));
-            if (++m > 12) { m = 1; y++; }
+            result.add(byKey.getOrDefault(
+                    y + "-" + m, new MonthlySummaryResponse(m, y, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO)));
+            if (++m > 12) {
+                m = 1;
+                y++;
+            }
         }
         return result;
     }
 
     public BigDecimal getMonthlyIncome(int month, int year) {
         User user = getAuthenticatedUser();
-        return transactionRepository.sumAmountByUserIdAndTypeAndMonthAndYear(user.getId(), TransactionType.INCOME, month, year);
+        return transactionRepository.sumAmountByUserIdAndTypeAndMonthAndYear(
+                user.getId(), TransactionType.INCOME, month, year);
     }
 
     public BigDecimal getMonthlyExpense(int month, int year) {
         User user = getAuthenticatedUser();
-        return transactionRepository.sumAmountByUserIdAndTypeAndMonthAndYear(user.getId(), TransactionType.EXPENSE, month, year);
+        return transactionRepository.sumAmountByUserIdAndTypeAndMonthAndYear(
+                user.getId(), TransactionType.EXPENSE, month, year);
     }
 
     private User getAuthenticatedUser() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userRepository.findByEmail(email)
+        return userRepository
+                .findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
     }
 
@@ -163,7 +176,6 @@ public class TransactionService {
                 transaction.getCategory().getName(),
                 transaction.getCategory().getColor(),
                 transaction.getCategory().getIcon(),
-                transaction.getCreatedAt()
-        );
+                transaction.getCreatedAt());
     }
 }

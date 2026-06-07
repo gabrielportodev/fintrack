@@ -1,16 +1,13 @@
 package me.gabrielporto.fintrack.backend.service;
 
-import lombok.RequiredArgsConstructor;
-
 import java.util.Map;
 import java.util.Objects;
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
-
 
 @Service
 @RequiredArgsConstructor
@@ -23,21 +20,25 @@ public class EmailService {
 
     public void sendPasswordResetCode(String email, String code) {
         Map<String, Object> body = Map.of(
-            "from", "Fintrack <contact@send.gabrielporto.me>",
-            "to", email,
-            "subject", "Fintrack — Código de redefinição de senha",
-            "html", buildEmailBody(code)
-        );
+                "from",
+                "Fintrack <contact@send.gabrielporto.me>",
+                "to",
+                email,
+                "subject",
+                "Fintrack — Código de redefinição de senha",
+                "html",
+                buildEmailBody(code));
 
         try {
-            webClient.post()
-                .uri("/emails")
-                .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
-                .header("Authorization", "Bearer " + resendApiKey)
-                .bodyValue(Objects.requireNonNull(body))
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
+            webClient
+                    .post()
+                    .uri("/emails")
+                    .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                    .header("Authorization", "Bearer " + resendApiKey)
+                    .bodyValue(Objects.requireNonNull(body))
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
         } catch (WebClientResponseException e) {
             throw new RuntimeException("Erro ao enviar email: " + e.getResponseBodyAsString(), e);
         }
@@ -135,6 +136,7 @@ public class EmailService {
               </table>
             </body>
             </html>
-            """.formatted(code, java.time.Year.now().getValue());
+            """
+                .formatted(code, java.time.Year.now().getValue());
     }
 }

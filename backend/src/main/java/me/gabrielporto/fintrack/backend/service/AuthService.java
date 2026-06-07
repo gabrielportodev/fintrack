@@ -1,15 +1,5 @@
 package me.gabrielporto.fintrack.backend.service;
 
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
 import lombok.RequiredArgsConstructor;
 import me.gabrielporto.fintrack.backend.domain.entity.User;
 import me.gabrielporto.fintrack.backend.dto.request.ChangePasswordRequest;
@@ -28,6 +18,15 @@ import me.gabrielporto.fintrack.backend.exception.ResourceNotFoundException;
 import me.gabrielporto.fintrack.backend.repository.UserRepository;
 import me.gabrielporto.fintrack.backend.security.AuthenticatedUserProvider;
 import me.gabrielporto.fintrack.backend.security.JwtService;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -60,8 +59,7 @@ public class AuthService {
     public TokenResponse login(LoginRequest request) {
         try {
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
-            );
+                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         } catch (AuthenticationException e) {
             throw new InvalidCredentialsException();
         }
@@ -95,7 +93,8 @@ public class AuthService {
 
     public MeResponse me() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByEmail(email)
+        User user = userRepository
+                .findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
         return new MeResponse(user.getId(), user.getName(), user.getEmail(), user.getCreatedAt(), user.getAvatarUrl());
     }
@@ -123,8 +122,7 @@ public class AuthService {
                 savedUser.getCreatedAt(),
                 savedUser.getAvatarUrl(),
                 accessToken,
-                refreshToken
-        );
+                refreshToken);
     }
 
     public MessageResponse changePassword(ChangePasswordRequest request) {
@@ -155,8 +153,12 @@ public class AuthService {
         user.setAvatarUrl(avatarUrl);
 
         User savedUser = userRepository.save(user);
-        return new MeResponse(savedUser.getId(), savedUser.getName(), savedUser.getEmail(),
-                savedUser.getCreatedAt(), savedUser.getAvatarUrl());
+        return new MeResponse(
+                savedUser.getId(),
+                savedUser.getName(),
+                savedUser.getEmail(),
+                savedUser.getCreatedAt(),
+                savedUser.getAvatarUrl());
     }
 
     public MeResponse removeAvatar() {
@@ -164,8 +166,11 @@ public class AuthService {
         user.setAvatarUrl(null);
 
         User savedUser = userRepository.save(user);
-        return new MeResponse(savedUser.getId(), savedUser.getName(), savedUser.getEmail(),
-                savedUser.getCreatedAt(), savedUser.getAvatarUrl());
+        return new MeResponse(
+                savedUser.getId(),
+                savedUser.getName(),
+                savedUser.getEmail(),
+                savedUser.getCreatedAt(),
+                savedUser.getAvatarUrl());
     }
-
 }

@@ -1,21 +1,13 @@
 package me.gabrielporto.fintrack.backend.ai;
 
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.UUID;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.ai.chat.client.ChatClient;
 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.UUID;
 import me.gabrielporto.fintrack.backend.ai.dto.CategorySuggestion;
 import me.gabrielporto.fintrack.backend.ai.dto.SuggestCategoryRequest;
 import me.gabrielporto.fintrack.backend.ai.dto.SuggestCategoryResponse;
@@ -23,6 +15,13 @@ import me.gabrielporto.fintrack.backend.domain.entity.Category;
 import me.gabrielporto.fintrack.backend.domain.enums.TransactionType;
 import me.gabrielporto.fintrack.backend.repository.CategoryRepository;
 import me.gabrielporto.fintrack.backend.security.AuthenticatedUserProvider;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.ai.chat.client.ChatClient;
 
 @ExtendWith(MockitoExtension.class)
 class CategorizadorServiceTest {
@@ -48,8 +47,18 @@ class CategorizadorServiceTest {
         when(builder.build()).thenReturn(chatClient);
         service = new CategorizadorService(builder, categoryRepository, userProvider);
 
-        alimentacao = Category.builder().id(UUID.randomUUID()).name("Alimentação").color("#f00").icon("🍔").build();
-        transporte = Category.builder().id(UUID.randomUUID()).name("Transporte").color("#0f0").icon("🚗").build();
+        alimentacao = Category.builder()
+                .id(UUID.randomUUID())
+                .name("Alimentação")
+                .color("#f00")
+                .icon("🍔")
+                .build();
+        transporte = Category.builder()
+                .id(UUID.randomUUID())
+                .name("Transporte")
+                .color("#0f0")
+                .icon("🚗")
+                .build();
     }
 
     private List<Category> categorias() {
