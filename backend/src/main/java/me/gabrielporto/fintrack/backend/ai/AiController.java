@@ -19,13 +19,18 @@ public class AiController {
 
     private final ChatClient chat;
     private final CategorizadorService categorizadorService;
-    private final ConsultaFinanceiraTools tools;
+    private final ConsultaFinanceiraTools consultaTools;
+    private final MutacaoFinanceiraTools mutacaoTools;
 
     public AiController(
-            ChatClient.Builder builder, CategorizadorService categorizadorService, ConsultaFinanceiraTools tools) {
+            ChatClient.Builder builder,
+            CategorizadorService categorizadorService,
+            ConsultaFinanceiraTools consultaTools,
+            MutacaoFinanceiraTools mutacaoTools) {
         this.chat = builder.build();
         this.categorizadorService = categorizadorService;
-        this.tools = tools;
+        this.consultaTools = consultaTools;
+        this.mutacaoTools = mutacaoTools;
     }
 
     @PostMapping("/suggest-category")
@@ -48,7 +53,7 @@ public class AiController {
                         """
                                 .formatted(LocalDate.now()))
                 .user(request.pergunta())
-                .tools(tools)
+                .tools(consultaTools, mutacaoTools)
                 .call()
                 .content();
 
