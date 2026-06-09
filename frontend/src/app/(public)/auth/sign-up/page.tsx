@@ -39,14 +39,6 @@ const SignUpPage = () => {
 
   return (
     <div className='min-h-screen bg-background flex flex-col items-center justify-center px-4 relative'>
-      <Link
-        href='/'
-        className='absolute top-6 left-6 flex items-center gap-1.5 text-[13px] text-muted-foreground hover:text-foreground transition-colors'
-      >
-        <ArrowLeft size={14} />
-        Início
-      </Link>
-
       <div className='w-full max-w-90'>
         <div className='flex flex-col items-center gap-3 mb-8'>
           <LogoIcon />
