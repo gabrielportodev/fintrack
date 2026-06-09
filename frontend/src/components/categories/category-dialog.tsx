@@ -6,10 +6,10 @@ import type { CategoryType } from '@/types/category'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { CATEGORY_ICON_OPTIONS, getCategoryIcon, normalizeCategoryIconName } from '@/lib/category-icons'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
-const iconOptions = ['🍽️', '🚗', '🏠', '🎬', '💊', '📚', '🛒', '☕', '💰', '💻', '📈', '🎁', '✈️', '🐾', '🎮', '🏋️']
 const colorOptions = [
   '#6366F1',
   '#8B5CF6',
@@ -37,7 +37,7 @@ interface CategoryDialogProps {
 export const CategoryDialog = ({ open, onOpenChange, category, onSaved }: CategoryDialogProps) => {
   const [name, setName] = useState(category?.name ?? '')
   const [selectedColor, setSelectedColor] = useState(category?.color ?? '#6366F1')
-  const [selectedIcon, setSelectedIcon] = useState(category?.icon ?? '🍽️')
+  const [selectedIcon, setSelectedIcon] = useState(normalizeCategoryIconName(category?.icon))
   const [saving, setSaving] = useState(false)
 
   const stateKey = `${open}-${category?.id ?? 'new'}`
@@ -48,11 +48,11 @@ export const CategoryDialog = ({ open, onOpenChange, category, onSaved }: Catego
     if (category) {
       setName(category.name)
       setSelectedColor(category.color)
-      setSelectedIcon(category.icon)
+      setSelectedIcon(normalizeCategoryIconName(category.icon))
     } else {
       setName('')
       setSelectedColor('#6366F1')
-      setSelectedIcon('🍽️')
+      setSelectedIcon('utensils')
     }
   }
 
@@ -115,19 +115,19 @@ export const CategoryDialog = ({ open, onOpenChange, category, onSaved }: Catego
           <div className='flex flex-col gap-2'>
             <Label>Ícone</Label>
             <div className='flex flex-wrap gap-2'>
-              {iconOptions.map(icon => (
+              {CATEGORY_ICON_OPTIONS.map(iconName => (
                 <Button
-                  key={icon}
+                  key={iconName}
                   variant='ghost'
                   size='icon'
-                  onClick={() => setSelectedIcon(icon)}
+                  onClick={() => setSelectedIcon(iconName)}
                   className={`w-9 h-9 rounded-lg text-lg ${
-                    selectedIcon === icon
+                    selectedIcon === iconName
                       ? 'bg-primary/20 border border-primary/50 hover:bg-primary/20'
                       : 'bg-muted hover:bg-muted/80 border border-transparent'
                   }`}
                 >
-                  {icon}
+                  {getCategoryIcon(iconName)}
                 </Button>
               ))}
             </div>
@@ -138,7 +138,7 @@ export const CategoryDialog = ({ open, onOpenChange, category, onSaved }: Catego
               className='flex items-center justify-center w-10 h-10 rounded-xl text-xl'
               style={{ background: selectedColor + '20' }}
             >
-              {selectedIcon}
+              {getCategoryIcon(selectedIcon)}
             </div>
             <div>
               <p className='text-sm font-medium'>{name || 'Pré-visualização'}</p>

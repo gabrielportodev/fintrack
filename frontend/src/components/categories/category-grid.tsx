@@ -7,6 +7,7 @@ import type { CategoryType } from '@/types/category'
 import { Plus, Pencil, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { formatDateLong } from '@/lib/utils'
+import { getCategoryIcon } from '@/lib/category-icons'
 import { Card } from '@/components/ui/card'
 import { useState } from 'react'
 
@@ -36,7 +37,7 @@ export const CategoryGrid = ({ categories, loading, onNew, onEdit, onDelete }: C
                   className='flex items-center justify-center w-11 h-11 rounded-xl text-2xl'
                   style={{ background: cat.color + '20', border: `1px solid ${cat.color}30` }}
                 >
-                  {cat.icon}
+                  {getCategoryIcon(cat.icon)}
                 </div>
                 <div className='flex items-center gap-1'>
                   <Tooltip>

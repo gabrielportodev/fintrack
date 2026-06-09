@@ -7,6 +7,7 @@ import { Progress } from '@/components/ui/progress'
 import { Pencil, Trash2 } from 'lucide-react'
 import type { GoalType } from '@/types/goal'
 import { Card } from '@/components/ui/card'
+import { getCategoryIcon } from '@/lib/category-icons'
 import { brl } from '@/lib/utils'
 import { useState } from 'react'
 
@@ -55,7 +56,7 @@ export const GoalList = ({ goals, loading, onEdit, onDelete }: GoalListProps) =>
                     className='flex items-center justify-center w-9 h-9 rounded-lg text-lg shrink-0'
                     style={{ background: (goal.categoryColor ?? '#888') + '20' }}
                   >
-                    {goal.categoryIcon}
+                    {getCategoryIcon(goal.categoryIcon)}
                   </div>
                   <div>
                     <p className='font-semibold text-sm'>{goal.name}</p>

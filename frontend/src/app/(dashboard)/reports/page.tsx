@@ -9,6 +9,7 @@ import type { TransactionType } from '@/types/transaction'
 import { TransactionTypeEnum } from '@/types/transaction'
 import { generateReportPDF } from '@/lib/report-pdf'
 import { useAuth } from '@/contexts/auth-context'
+import { getCategoryIcon } from '@/lib/category-icons'
 import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 
@@ -109,7 +110,7 @@ const ReportsPage = () => {
           if (!catMap.has(tx.categoryId)) {
             catMap.set(tx.categoryId, {
               name: tx.categoryName ?? '',
-              icon: tx.categoryIcon ?? '',
+              icon: getCategoryIcon(tx.categoryIcon),
               color: tx.categoryColor ?? '#888',
               total: 0,
               pct: 0

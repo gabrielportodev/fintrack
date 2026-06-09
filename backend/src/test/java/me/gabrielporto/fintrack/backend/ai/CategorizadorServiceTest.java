@@ -51,13 +51,13 @@ class CategorizadorServiceTest {
                 .id(UUID.randomUUID())
                 .name("Alimentação")
                 .color("#f00")
-                .icon("🍔")
+                .icon("utensils")
                 .build();
         transporte = Category.builder()
                 .id(UUID.randomUUID())
                 .name("Transporte")
                 .color("#0f0")
-                .icon("🚗")
+                .icon("car")
                 .build();
     }
 

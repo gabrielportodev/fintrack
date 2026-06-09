@@ -2,6 +2,7 @@ package me.gabrielporto.fintrack.backend.ai;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import me.gabrielporto.fintrack.backend.domain.enums.TransactionType;
@@ -24,6 +25,49 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class MutacaoFinanceiraTools {
+
+    private static final Map<String, String> ICON_ALIASES = Map.ofEntries(
+            Map.entry("food", "utensils"),
+            Map.entry("restaurant", "utensils"),
+            Map.entry("utensils", "utensils"),
+            Map.entry("car", "car"),
+            Map.entry("transport", "car"),
+            Map.entry("home", "home"),
+            Map.entry("house", "home"),
+            Map.entry("movie", "film"),
+            Map.entry("entertainment", "film"),
+            Map.entry("film", "film"),
+            Map.entry("health", "pill"),
+            Map.entry("medicine", "pill"),
+            Map.entry("pill", "pill"),
+            Map.entry("book", "book-open"),
+            Map.entry("book-open", "book-open"),
+            Map.entry("education", "book-open"),
+            Map.entry("shopping", "shopping-cart"),
+            Map.entry("shopping-cart", "shopping-cart"),
+            Map.entry("cart", "shopping-cart"),
+            Map.entry("coffee", "coffee"),
+            Map.entry("money", "wallet"),
+            Map.entry("wallet", "wallet"),
+            Map.entry("subscription", "wallet"),
+            Map.entry("subscriptions", "wallet"),
+            Map.entry("assinatura", "wallet"),
+            Map.entry("assinaturas", "wallet"),
+            Map.entry("computer", "laptop"),
+            Map.entry("laptop", "laptop"),
+            Map.entry("investment", "chart-line"),
+            Map.entry("chart", "chart-line"),
+            Map.entry("chart-line", "chart-line"),
+            Map.entry("gift", "gift"),
+            Map.entry("travel", "plane"),
+            Map.entry("plane", "plane"),
+            Map.entry("pet", "paw-print"),
+            Map.entry("paw-print", "paw-print"),
+            Map.entry("game", "gamepad-2"),
+            Map.entry("gamepad-2", "gamepad-2"),
+            Map.entry("gym", "dumbbell"),
+            Map.entry("fitness", "dumbbell"),
+            Map.entry("dumbbell", "dumbbell"));
 
     private final TransactionService transactionService;
     private final CategoryService categoryService;
@@ -70,11 +114,11 @@ public class MutacaoFinanceiraTools {
     public CategoryResponse criarCategoria(
             @ToolParam(description = "nome da categoria") String nome,
             @ToolParam(description = "cor em hexadecimal, ex.: #FF5733") String cor,
-            @ToolParam(description = "nome do ícone, ex.: shopping-cart") String icone) {
+            @ToolParam(description = "nome do ícone, ex.: shopping-cart, wallet, car, home") String icone) {
         CategoryRequest req = new CategoryRequest();
         req.setName(nome);
         req.setColor(cor);
-        req.setIcon(icone);
+        req.setIcon(normalizarIcone(icone));
         return categoryService.create(req);
     }
 
@@ -87,7 +131,7 @@ public class MutacaoFinanceiraTools {
         CategoryRequest req = new CategoryRequest();
         req.setName(nome);
         req.setColor(cor);
-        req.setIcon(icone);
+        req.setIcon(normalizarIcone(icone));
         return categoryService.update(id, req);
     }
 
@@ -131,5 +175,13 @@ public class MutacaoFinanceiraTools {
                 .findByNameAndUserId(nome, userProvider.getCurrentUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("Categoria '" + nome + "' não encontrada"))
                 .getId();
+    }
+
+    private String normalizarIcone(String icone) {
+        if (icone == null || icone.isBlank()) {
+            return "utensils";
+        }
+        String valor = icone.trim();
+        return ICON_ALIASES.getOrDefault(valor.toLowerCase(), valor);
     }
 }

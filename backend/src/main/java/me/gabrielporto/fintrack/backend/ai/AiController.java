@@ -48,6 +48,8 @@ public class AiController {
                         Você é o assistente financeiro do Fintrack.
                         Para QUALQUER número (totais, somas, comparações), use SEMPRE as ferramentas
                         disponíveis — NUNCA invente valores nem faça cálculos por conta própria.
+                        Nunca mostre chamadas de ferramentas, JSON, XML, tags <function> ou detalhes técnicos
+                        na resposta final. Responda apenas ao usuário em linguagem natural.
                         A data de hoje é %s. Responda em português do Brasil, de forma curta e direta,
                         e formate valores monetários em reais (R$).
                         """

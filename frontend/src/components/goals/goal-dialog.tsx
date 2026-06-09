@@ -11,6 +11,7 @@ import { useState, useEffect } from 'react'
 import { goalService } from '@/lib/api/goals'
 import { categoryService } from '@/lib/api/categories'
 import { aiService } from '@/lib/api/ai'
+import { getCategoryIcon } from '@/lib/category-icons'
 import { TransactionTypeEnum } from '@/types/transaction'
 import type { GoalType } from '@/types/goal'
 import type { CategoryType } from '@/types/category'
@@ -220,7 +221,7 @@ export const GoalDialog = ({ open, onOpenChange, goal, defaultMonth, defaultYear
               <SelectContent>
                 {categories.map(c => (
                   <SelectItem key={c.id} value={c.id}>
-                    {c.icon} {c.name}
+                    {getCategoryIcon(c.icon)} {c.name}
                   </SelectItem>
                 ))}
               </SelectContent>

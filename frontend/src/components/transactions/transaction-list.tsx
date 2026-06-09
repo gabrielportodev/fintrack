@@ -9,6 +9,7 @@ import type { TransactionType } from '@/types/transaction'
 import { TransactionTypeEnum } from '@/types/transaction'
 import { Loading } from '@/components/shared/loading'
 import { brl, formatDateFull } from '@/lib/utils'
+import { getCategoryIcon } from '@/lib/category-icons'
 import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
 
@@ -64,7 +65,7 @@ export const TransactionList = ({ transactions, loading, onEdit, onDelete }: Tra
                           className='flex items-center justify-center w-7 h-7 rounded-lg text-sm shrink-0'
                           style={{ background: (tx.categoryColor ?? '#888') + '20' }}
                         >
-                          {tx.categoryIcon}
+                          {getCategoryIcon(tx.categoryIcon)}
                         </div>
                         <span className='text-sm'>{tx.categoryName}</span>
                       </div>

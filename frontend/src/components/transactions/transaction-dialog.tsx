@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { aiService } from '@/lib/api/ai'
+import { getCategoryIcon } from '@/lib/category-icons'
 import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 
@@ -195,7 +196,7 @@ export const TransactionDialog = ({ open, onOpenChange, transaction, onSaved }: 
                 <SelectContent>
                   {categories.map(c => (
                     <SelectItem key={c.id} value={c.id}>
-                      {c.icon} {c.name}
+                      {getCategoryIcon(c.icon)} {c.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
